@@ -93,7 +93,10 @@ The `/feedback` Session ID required by the hackathon must come from the project 
   - Installed browsers: Google Chrome `150.0.7871.125`; Microsoft Edge
     `150.0.4078.83`.
   - Netlify deployment: pass at `https://flownee-build-week.netlify.app`, deploy
-    `6a5be6cc5715099f9535f7b8`.
+    `6a5cc2dff6f76e3dde4de76e` (latest), built from repository commit `f417def`.
+  - Latest production smoke check: HTTP 200 for `/`, `/manifest.webmanifest`,
+    and `/api/ai-status`; Netlify reports the deploy state as `ready` with the
+    Next.js server function available.
   - Signed-out production: HTTP 200 for home, fictional demo, manifest, service
     worker, icon, recording diagnostic, and AI status; AI enabled; untrusted
     origins rejected with HTTP 403 by both paid routes before provider use.
