@@ -11,6 +11,8 @@ import {
   LoaderCircle,
   MoreHorizontal,
   Sparkles,
+  Trash2,
+  X,
 } from "lucide-react";
 
 import { NetworkStatus } from "@/components/home/network-status";
@@ -321,22 +323,16 @@ function UpcomingCard({ state, onManage }: { state: HomeState; onManage?: (taskI
 type SavedItemsCardProps = {
   tasks: Task[];
   busy: boolean;
-  confirmCleanDone: boolean;
   onManage: (taskId: string) => void;
   onRequestCleanDone: () => void;
-  onCancelCleanDone: () => void;
-  onConfirmCleanDone: () => void;
   onRestoreLater: () => void;
 };
 
 export function SavedItemsCard({
   tasks,
   busy,
-  confirmCleanDone,
   onManage,
   onRequestCleanDone,
-  onCancelCleanDone,
-  onConfirmCleanDone,
   onRestoreLater,
 }: SavedItemsCardProps) {
   if (tasks.length === 0) return null;
@@ -382,37 +378,113 @@ export function SavedItemsCard({
             Restore for later
           </Button>
         </div>
-        {confirmCleanDone && (
-          <div
-            aria-label="Confirm cleaning completed items"
-            className="mt-3 rounded-xl border border-error/30 bg-error/10 p-3"
-            role="group"
-          >
-            <p className="text-sm text-foreground">
-              Permanently remove {completedCount === 1 ? "this completed item" : `all ${completedCount} completed items`}?
-            </p>
-            <div className="mt-3 flex flex-wrap gap-2">
-              <Button
-                disabled={busy || completedCount === 0}
-                variant="destructive"
-                size="sm"
-                onClick={onConfirmCleanDone}
-              >
-                Confirm clean done
-              </Button>
-              <Button
-                disabled={busy}
-                variant="outline"
-                size="sm"
-                onClick={onCancelCleanDone}
-              >
-                Cancel
-              </Button>
-            </div>
-          </div>
-        )}
       </CardContent>
     </Card>
+  );
+}
+
+type CleanDoneDialogProps = {
+  open: boolean;
+  completedCount: number;
+  busy: boolean;
+  errorMessage: string;
+  onClose: () => void;
+  onConfirm: () => void;
+};
+
+export function CleanDoneDialog({
+  open,
+  completedCount,
+  busy,
+  errorMessage,
+  onClose,
+  onConfirm,
+}: CleanDoneDialogProps) {
+  const dialogRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const previousOverflow = document.body.style.overflow;
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape" && !busy) onClose();
+    };
+
+    document.body.style.overflow = "hidden";
+    document.addEventListener("keydown", handleKeyDown);
+    dialogRef.current?.focus();
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [busy, onClose, open]);
+
+  if (!open) return null;
+
+  return (
+    <div className="fixed inset-0 z-[60] flex items-end bg-[var(--overlay)] backdrop-blur-sm sm:items-center sm:justify-center sm:p-6">
+      <section
+        aria-describedby="clean-done-description"
+        aria-labelledby="clean-done-title"
+        aria-modal="true"
+        className="w-full rounded-t-3xl border bg-background px-5 pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-5 shadow-2xl outline-none sm:max-w-[430px] sm:rounded-2xl sm:p-6"
+        ref={dialogRef}
+        role="dialog"
+        tabIndex={-1}
+      >
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary">
+              Saved items
+            </p>
+            <h2
+              className="mt-1 text-2xl font-semibold tracking-[-0.03em]"
+              id="clean-done-title"
+            >
+              Clean done items?
+            </h2>
+          </div>
+          <Button
+            aria-label="Close clean done confirmation"
+            disabled={busy}
+            onClick={onClose}
+            size="icon"
+            variant="ghost"
+          >
+            <X aria-hidden="true" />
+          </Button>
+        </div>
+
+        <p
+          className="mt-5 text-sm leading-6 text-muted-foreground"
+          id="clean-done-description"
+        >
+          Permanently remove {completedCount === 1
+            ? "this completed item"
+            : `all ${completedCount} completed items`}? This cannot be undone.
+        </p>
+
+        {errorMessage && (
+          <p className="mt-4 text-sm text-error-foreground" role="alert">
+            {errorMessage}
+          </p>
+        )}
+
+        <div className="mt-6 flex flex-wrap gap-2">
+          <Button
+            disabled={busy || completedCount === 0}
+            onClick={onConfirm}
+            variant="destructive"
+          >
+            <Trash2 aria-hidden="true" />
+            Confirm clean done
+          </Button>
+          <Button disabled={busy} onClick={onClose} variant="outline">
+            Cancel
+          </Button>
+        </div>
+      </section>
+    </div>
   );
 }
 
@@ -585,13 +657,17 @@ export function HomeShell({
   const savedTasks = snapshot?.tasks
     .filter((task) => task.status !== "active")
     .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt)) ?? [];
+  const completedSavedCount = savedTasks.filter(
+    (task) => task.status === "completed",
+  ).length;
+  const appIsInert = isFlowUpdateBlocking || confirmCleanDone;
 
   return (
     <>
     <div
-      aria-hidden={isFlowUpdateBlocking || undefined}
+      aria-hidden={appIsInert || undefined}
       className="mx-auto min-h-svh max-w-[430px] border-x border-border/70 bg-background text-foreground shadow-[0_0_45px_-28px_rgb(82_90_255_/_0.3)]"
-      inert={isFlowUpdateBlocking || undefined}
+      inert={appIsInert || undefined}
     >
       <NetworkStatus />
       <AppHeader />
@@ -647,13 +723,11 @@ export function HomeShell({
           <SavedItemsCard
             tasks={savedTasks}
             busy={actionBusy || isFlowUpdateBlocking}
-            confirmCleanDone={confirmCleanDone}
             onManage={openTask}
-            onRequestCleanDone={() => setConfirmCleanDone(true)}
-            onCancelCleanDone={() => setConfirmCleanDone(false)}
-            onConfirmCleanDone={() =>
-              void mutateTask({ kind: "delete-completed" }, { replan: false })
-            }
+            onRequestCleanDone={() => {
+              setActionError("");
+              setConfirmCleanDone(true);
+            }}
             onRestoreLater={() =>
               void mutateTask({ kind: "restore-postponed" })
             }
@@ -698,6 +772,19 @@ export function HomeShell({
         onDelete={(task) => void mutateTask({ kind: "delete", taskId: task.id })}
       />
     </div>
+    <CleanDoneDialog
+      open={confirmCleanDone}
+      completedCount={completedSavedCount}
+      busy={actionBusy}
+      errorMessage={actionError}
+      onClose={() => {
+        setActionError("");
+        setConfirmCleanDone(false);
+      }}
+      onConfirm={() =>
+        void mutateTask({ kind: "delete-completed" }, { replan: false })
+      }
+    />
     <FlowUpdateOverlay visible={isFlowUpdateBlocking} />
     </>
   );

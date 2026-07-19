@@ -4,6 +4,24 @@ Use this file to preserve evidence of Codex contributions and human judgment. Do
 
 The `/feedback` Session ID required by the hackathon must come from the project task where most core functionality is built. A baseline or documentation session should not be presented as that session unless it genuinely contains the majority of core functionality.
 
+## 2026-07-19 — Clean done confirmation modal
+
+- Session ID: `TBD` (supporting destructive-action clarity)
+- Objective: Present `Clean done` confirmation as a consistent Flownee modal instead of an inline panel.
+- Codex contributions:
+  - Replaced the saved-card inline confirmation with the established mobile bottom-sheet and centered-desktop dialog pattern.
+  - Added a dimmed blurred backdrop, initial focus, body scroll lock, inert/`aria-hidden` background, Escape cancellation, close icon, cancel action, and destructive confirmation.
+  - Preserved singular/plural removal copy and surfaced local deletion errors inside the modal.
+  - Kept the existing atomic completed-item deletion operation unchanged.
+  - Updated component coverage for closed/open rendering, modal semantics, warning copy, and close controls.
+- Human product and interaction decisions preserved:
+  - Victoria requested the `Permanently remove...` confirmation be presented as a modal consistent with the rest of Flownee.
+- Verification:
+  - Focused component coverage passes for closed/open rendering, modal semantics, warning copy, and close controls.
+  - Full verification passes: 28 test files and 90 tests, ESLint with zero warnings, and the optimized Next.js production build.
+  - Local browser checks at `1280x720` confirm dark and light rendering, initial dialog focus, `aria-modal`, inert/`aria-hidden` background, hidden body overflow, no horizontal overflow, and safe cancellation with all saved-item fixtures preserved.
+  - Commit and production deployment intentionally await separate product-owner approval.
+
 ## 2026-07-19 — blocking flow-update progress
 
 - Session ID: `TBD` (supporting task-action feedback and replanning safety)

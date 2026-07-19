@@ -2,6 +2,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it, vi } from "vitest";
 
 import {
+  CleanDoneDialog,
   FlowUpdateOverlay,
   PlanRecommendation,
   SavedItemsCard,
@@ -74,11 +75,8 @@ describe("saved items", () => {
           savedTask("postponed", "Postponed intention", "postponed"),
         ]}
         busy={false}
-        confirmCleanDone={false}
         onManage={vi.fn()}
         onRequestCleanDone={vi.fn()}
-        onCancelCleanDone={vi.fn()}
-        onConfirmCleanDone={vi.fn()}
         onRestoreLater={vi.fn()}
       />,
     );
@@ -97,20 +95,34 @@ describe("saved items", () => {
   });
 
   it("shows an explicit confirmation before cleaning completed items", () => {
+    expect(
+      renderToStaticMarkup(
+        <CleanDoneDialog
+          open={false}
+          completedCount={1}
+          busy={false}
+          errorMessage=""
+          onClose={vi.fn()}
+          onConfirm={vi.fn()}
+        />,
+      ),
+    ).toBe("");
+
     const markup = renderToStaticMarkup(
-      <SavedItemsCard
-        tasks={[savedTask("completed", "Completed intention", "completed")]}
+      <CleanDoneDialog
+        open
+        completedCount={1}
         busy={false}
-        confirmCleanDone
-        onManage={vi.fn()}
-        onRequestCleanDone={vi.fn()}
-        onCancelCleanDone={vi.fn()}
-        onConfirmCleanDone={vi.fn()}
-        onRestoreLater={vi.fn()}
+        errorMessage=""
+        onClose={vi.fn()}
+        onConfirm={vi.fn()}
       />,
     );
 
-    expect(markup).toContain("Permanently remove this completed item?");
+    expect(markup).toContain('role="dialog"');
+    expect(markup).toContain('aria-modal="true"');
+    expect(markup).toContain("Permanently remove this completed item? This cannot be undone.");
     expect(markup).toContain("Confirm clean done");
+    expect(markup).toContain("Close clean done confirmation");
   });
 });
