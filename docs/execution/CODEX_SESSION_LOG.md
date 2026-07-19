@@ -17,6 +17,7 @@ The `/feedback` Session ID required by the hackathon must come from the project 
 - Verification:
   - Public-host/proxy regression, mismatched-origin, and explicit cross-site tests pass.
   - 14 test files and 57 tests pass; lint and production build pass.
+  - Production deploy `6a5cc5ff68d958941cc7bed1`: the public same-origin diagnostic advances to normal HTTP 400 request validation, while the attacker-origin diagnostic remains blocked with HTTP 403.
 
 ## 2026-07-19 — mobile-width desktop shell
 
@@ -107,7 +108,7 @@ The `/feedback` Session ID required by the hackathon must come from the project 
   - Installed browsers: Google Chrome `150.0.7871.125`; Microsoft Edge
     `150.0.4078.83`.
   - Netlify deployment: pass at `https://flownee-build-week.netlify.app`, deploy
-    `6a5cc2dff6f76e3dde4de76e` (latest), built from repository commit `f417def`.
+    `6a5cc5ff68d958941cc7bed1` (latest), including same-origin hotfix commit `6c217ae`.
   - Latest production smoke check: HTTP 200 for `/`, `/manifest.webmanifest`,
     and `/api/ai-status`; Netlify reports the deploy state as `ready` with the
     Next.js server function available.

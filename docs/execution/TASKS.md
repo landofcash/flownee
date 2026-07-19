@@ -16,7 +16,7 @@ Keep exactly one implementation task under **Now**. Move completed items to **Do
 
 ## Done
 
-- [x] Fixed production same-origin validation behind Netlify's reverse proxy. Evidence: the public Flownee `Origin` is now compared with the externally visible host and forwarded protocol instead of Netlify's rewritten internal request URL; explicit `Sec-Fetch-Site: cross-site`, malformed origins, and mismatched origins remain rejected; 57 tests, lint, and production build pass.
+- [x] Fixed production same-origin validation behind Netlify's reverse proxy. Evidence: the public Flownee `Origin` is now compared with the externally visible host and forwarded protocol instead of Netlify's rewritten internal request URL; production deploy `6a5cc5ff68d958941cc7bed1` advances an audio-free same-origin request to normal HTTP 400 validation while an attacker-origin request remains HTTP 403; 57 tests, lint, and production build pass.
 
 - [x] Restyled the bottom voice action as a classical rectangle and enlarged its title without overlap. Evidence: the panel has a measured `0px` corner radius, `Add by voice` is `16px`/semibold with a `20px` line height, and the unchanged `64px` microphone has `9px` of clear space above the title at narrow and `1440px` widths; no horizontal overflow; 54 tests, lint, and production build pass.
 
