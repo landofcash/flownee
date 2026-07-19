@@ -209,6 +209,11 @@ Names may change during implementation; responsibilities should remain separate.
   check is the authoritative second guard if an aborted response still arrives.
 - Provider failure leaves the confirmed mutation and provisional order intact,
   stops the updating indicator, and exposes an explicit retry action.
+- While a task-state mutation and its required replan are in flight, a focused
+  modal progress overlay makes the saved/update boundary explicit and blocks
+  pointer, touch, scroll, and keyboard interaction with the underlying flow.
+  The overlay closes on success, handled failure, timeout, or when no active
+  tasks remain and no model call is required.
 
 ### Transcript-review recovery
 

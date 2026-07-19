@@ -4,6 +4,26 @@ Use this file to preserve evidence of Codex contributions and human judgment. Do
 
 The `/feedback` Session ID required by the hackathon must come from the project task where most core functionality is built. A baseline or documentation session should not be presented as that session unless it genuinely contains the majority of core functionality.
 
+## 2026-07-19 — blocking flow-update progress
+
+- Session ID: `TBD` (supporting task-action feedback and replanning safety)
+- Objective: Make the post-action flow update unmistakable and prevent interaction until it settles.
+- Codex contributions:
+  - Added a full-viewport, focused, accessible modal progress overlay with Flownee processing animation and explicit saved/update language.
+  - Connected its lifecycle across the local IndexedDB mutation and the complete protected replan request instead of ending it after the local write.
+  - Made the underlying application inert and locked document scrolling while the overlay is visible.
+  - Closed the overlay on success, handled failure, timeout, local mutation failure, or the all-complete no-replan path.
+  - Reused the overlay for all task changes that require replanning and retries, while excluding completed-history cleanup.
+  - Added regression coverage for visibility, modal semantics, explanatory copy, and the absence of a dismiss action.
+- Human product and interaction decisions preserved:
+  - Victoria requested that updating the flow after completing an item be clearly visible and block the screen.
+- Verification:
+  - The safe fictional `?demo=updating` state renders the real blocker without changing saved tasks or calling GPT-5.6.
+  - Browser measurements confirm the dialog is focused and `aria-modal`, the app is inert and `aria-hidden`, body overflow is hidden, no dismiss button exists, the overlay covers the complete `1280x720` viewport at z-index 80, and there is no horizontal overflow.
+  - Visual inspection confirms the dark-theme Flownee processing treatment and readable saved/update message over the blurred previous flow.
+  - 28 test files and 90 tests, lint, and production build pass.
+  - Commit and production deployment intentionally await separate product-owner approval.
+
 ## 2026-07-19 — saved-items bulk controls
 
 - Session ID: `TBD` (supporting local-first task-state management)

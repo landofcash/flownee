@@ -2,6 +2,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it, vi } from "vitest";
 
 import {
+  FlowUpdateOverlay,
   PlanRecommendation,
   SavedItemsCard,
 } from "@/components/home/home-shell";
@@ -46,6 +47,21 @@ describe("home recommendation actions", () => {
     expect(doneButton).toContain('data-variant="default"');
     expect(laterButton).toContain('data-variant="default"');
     expect(laterButton).toContain("lucide-clock-3");
+  });
+});
+
+describe("flow update overlay", () => {
+  it("renders a blocking accessible progress dialog only while visible", () => {
+    expect(renderToStaticMarkup(<FlowUpdateOverlay visible={false} />)).toBe("");
+
+    const markup = renderToStaticMarkup(<FlowUpdateOverlay visible />);
+    expect(markup).toContain('role="dialog"');
+    expect(markup).toContain('aria-modal="true"');
+    expect(markup).toContain("Updating your flow");
+    expect(markup).toContain(
+      "Your change is saved. Flownee is finding what makes sense next.",
+    );
+    expect(markup).not.toContain("button");
   });
 });
 

@@ -8,6 +8,7 @@ import {
   CircleDot,
   Clock3,
   ListTodo,
+  LoaderCircle,
   MoreHorizontal,
   Sparkles,
 } from "lucide-react";
@@ -45,6 +46,58 @@ type HomeShellProps = {
   state: HomeState;
   useLocalData?: boolean;
 };
+
+export function FlowUpdateOverlay({ visible }: { visible: boolean }) {
+  const dialogRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!visible) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    dialogRef.current?.focus();
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [visible]);
+
+  if (!visible) return null;
+
+  return (
+    <div className="fixed inset-0 z-[80] flex touch-none items-center justify-center bg-[var(--overlay)] px-6 backdrop-blur-md">
+      <div
+        aria-describedby="flow-update-description"
+        aria-labelledby="flow-update-title"
+        aria-modal="true"
+        className="w-full max-w-sm rounded-2xl border border-primary/25 bg-background p-7 text-center shadow-2xl outline-none"
+        ref={dialogRef}
+        role="dialog"
+        tabIndex={-1}
+      >
+        <span className="animate-flownee-gradient mx-auto flex size-20 items-center justify-center rounded-full bg-flownee-gradient p-1 motion-reduce:animate-none">
+          <span className="flex size-full items-center justify-center rounded-full bg-background text-primary">
+            <LoaderCircle
+              aria-hidden="true"
+              className="size-9 animate-spin motion-reduce:animate-none"
+            />
+          </span>
+        </span>
+        <h2
+          className="mt-5 text-2xl font-semibold tracking-[-0.03em]"
+          id="flow-update-title"
+        >
+          Updating your flow
+        </h2>
+        <p
+          className="mt-2 text-sm leading-6 text-muted-foreground"
+          id="flow-update-description"
+        >
+          Your change is saved. Flownee is finding what makes sense next.
+        </p>
+      </div>
+    </div>
+  );
+}
 
 function EffortBadge({ minutes }: { minutes: number | null }) {
   return (
@@ -376,6 +429,9 @@ export function HomeShell({
   const [actionError, setActionError] = useState("");
   const [planningError, setPlanningError] = useState("");
   const [confirmCleanDone, setConfirmCleanDone] = useState(false);
+  const [isFlowUpdateBlocking, setIsFlowUpdateBlocking] = useState(
+    !useLocalData && initialState.status === "plan" && initialState.isUpdating,
+  );
   const replanAttemptRef = useRef(0);
   const replanAbortRef = useRef<AbortController | null>(null);
 
@@ -404,17 +460,21 @@ export function HomeShell({
   useEffect(() => () => replanAbortRef.current?.abort(), []);
 
   const requestReplan = useCallback(async (nextSnapshot: FlowneeSnapshot) => {
-    if (nextSnapshot.tasks.every((task) => task.status !== "active")) return;
+    if (nextSnapshot.tasks.every((task) => task.status !== "active")) {
+      setIsFlowUpdateBlocking(false);
+      return;
+    }
     replanAbortRef.current?.abort();
     const controller = new AbortController();
     replanAbortRef.current = controller;
     const attempt = replanAttemptRef.current + 1;
     replanAttemptRef.current = attempt;
-    const request = createReplanningRequest(nextSnapshot);
+    setIsFlowUpdateBlocking(true);
     setPlanningError("");
     let repository: FlowneeRepository | null = null;
 
     try {
+      const request = createReplanningRequest(nextSnapshot);
       const response = await fetch("/api/plan", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -453,6 +513,9 @@ export function HomeShell({
       setState((current) => current.status === "plan" ? { ...current, isUpdating: false } : current);
     } finally {
       repository?.close();
+      if (attempt === replanAttemptRef.current) {
+        setIsFlowUpdateBlocking(false);
+      }
     }
   }, []);
 
@@ -461,6 +524,7 @@ export function HomeShell({
     { replan = true }: { replan?: boolean } = {},
   ) {
     if (!useLocalData) return;
+    if (replan) setIsFlowUpdateBlocking(true);
     setActionBusy(true);
     setActionError("");
     setPlanningError("");
@@ -476,10 +540,17 @@ export function HomeShell({
       setSelectedTask(null);
       setConfirmCleanDone(false);
       setActionBusy(false);
-      if (replan) void requestReplan(nextSnapshot);
+      if (replan) {
+        if (nextSnapshot.tasks.some((task) => task.status === "active")) {
+          void requestReplan(nextSnapshot);
+        } else {
+          setIsFlowUpdateBlocking(false);
+        }
+      }
     } catch (error) {
       setActionError(error instanceof Error ? error.message : "That change could not be saved on this device.");
       setActionBusy(false);
+      if (replan) setIsFlowUpdateBlocking(false);
     } finally {
       repository?.close();
     }
@@ -516,7 +587,12 @@ export function HomeShell({
     .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt)) ?? [];
 
   return (
-    <div className="mx-auto min-h-svh max-w-[430px] border-x border-border/70 bg-background text-foreground shadow-[0_0_45px_-28px_rgb(82_90_255_/_0.3)]">
+    <>
+    <div
+      aria-hidden={isFlowUpdateBlocking || undefined}
+      className="mx-auto min-h-svh max-w-[430px] border-x border-border/70 bg-background text-foreground shadow-[0_0_45px_-28px_rgb(82_90_255_/_0.3)]"
+      inert={isFlowUpdateBlocking || undefined}
+    >
       <NetworkStatus />
       <AppHeader />
 
@@ -537,7 +613,7 @@ export function HomeShell({
           {state.status === "plan" && (
             <PlanRecommendation
               state={state}
-              actionsDisabled={!useLocalData || actionBusy}
+              actionsDisabled={!useLocalData || actionBusy || isFlowUpdateBlocking}
               onComplete={(taskId) => updateStatus(taskId, "completed")}
               onPostpone={(taskId) => updateStatus(taskId, "postponed")}
               onManage={openTask}
@@ -570,7 +646,7 @@ export function HomeShell({
         {useLocalData && (
           <SavedItemsCard
             tasks={savedTasks}
-            busy={actionBusy}
+            busy={actionBusy || isFlowUpdateBlocking}
             confirmCleanDone={confirmCleanDone}
             onManage={openTask}
             onRequestCleanDone={() => setConfirmCleanDone(true)}
@@ -600,7 +676,7 @@ export function HomeShell({
       <TaskActionsDialog
         key={selectedTask?.id ?? "closed"}
         task={selectedTask}
-        busy={actionBusy}
+        busy={actionBusy || isFlowUpdateBlocking}
         errorMessage={actionError}
         onClose={() => setSelectedTask(null)}
         onComplete={(task) => updateStatus(task.id, "completed")}
@@ -622,5 +698,7 @@ export function HomeShell({
         onDelete={(task) => void mutateTask({ kind: "delete", taskId: task.id })}
       />
     </div>
+    <FlowUpdateOverlay visible={isFlowUpdateBlocking} />
+    </>
   );
 }
