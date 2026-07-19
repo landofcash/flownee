@@ -69,6 +69,12 @@ Opening Flownee is a local operation:
 
 ## Proposed local data model
 
+The version-1 schema is implemented with the native IndexedDB API in
+`src/lib/storage`. It uses separate `transcripts`, `tasks`, `plans`, and
+`metadata` object stores. Runtime assertions validate records before writes and
+after reads. The metadata store maintains a monotonically increasing task
+revision used to reject stale plans.
+
 ### `Task`
 
 | Field | Purpose |
@@ -80,6 +86,7 @@ Opening Flownee is a local operation:
 | `status` | `active`, `completed`, or `postponed` |
 | `statedDeadline` | Deadline only when explicitly stated/confirmed |
 | `estimatedEffortMinutes` | Editable AI estimate |
+| `effortSource` | `ai-estimate`, `user-stated`, or `user-edited` provenance paired with the effort value |
 | `contexts` | Editable activity/location/tool categories |
 | `dependencies` | Other task IDs or confirmed textual dependency |
 | `assumptions` | Model assumptions requiring visibility/confirmation |
@@ -108,20 +115,43 @@ Do not persist the audio blob after successful transcription by default.
 | `basedOnRevision` | Local task-collection revision |
 | `model` | GPT-5.6 model identifier used |
 
+Repository guarantees:
+
+- Confirmed transcripts can be saved independently of later reasoning.
+- Task actions atomically mutate or delete the item, clean dependency links to newly inactive items, increment the collection revision, and write a valid provisional plan before replanning.
+- A plan replaces the current valid plan only when its revision matches the current task revision.
+- New tasks and their plan can be committed atomically in one transaction.
+- Plans include every active task exactly once, exclude inactive tasks, and place `nextTaskId` first.
+- Delete-all clears transcripts, tasks, plans, and revision metadata in one transaction.
+
 ## GPT-5.6 response contract
 
-Use Structured Outputs or an equivalently strict JSON schema. At minimum return:
+The version-1 planning contract is implemented in `src/lib/ai` with matching
+TypeScript types, strict JSON Schemas, a lean developer prompt, semantic runtime
+validation, and executable evaluation fixtures.
 
-- Extracted new tasks.
-- User-stated attributes separated from inferred values.
-- Editable effort estimates.
-- Essential unresolved assumptions or clarification needs.
-- Ordered active task IDs.
-- One next-task ID.
-- A concise reason for the next action.
-- Optional grouping/parallel-work explanation needed for the UI.
+- Endpoint contract: Responses API with strict `text.format` Structured Outputs.
+- Model baseline: explicit `gpt-5.6-sol` with `medium` reasoning. This
+  quality-first configuration must be measured against the fixtures before any
+  lower-effort or lower-cost family tier is adopted.
+- Input operation: `capture` includes one confirmed transcript and may extract
+  tasks; `replan` contains no transcript and is forbidden from creating tasks or
+  clarifications. Both include the task revision, compact active-task snapshot,
+  capture time, and IANA time zone. Completed history and unrelated local data are excluded.
+- Output: extracted tasks, explicit attribute provenance, editable effort
+  estimates, assumptions, essential clarifications, a complete order, one
+  explained next action, and genuine parallel groups.
+- Deadline policy: a value is permitted only with `user-stated` provenance;
+  otherwise both value and source must be `null`/`none`.
+- Empty-state policy: no active or extracted tasks produces an explicit
+  `no-action` plan with null next-action fields.
 
-Reject responses with unknown task IDs, duplicate IDs, missing next items, invalid status transitions, or inconsistent order. Preserve the prior plan on rejection.
+The runtime validator rejects missing or unknown fields, unsupported schema
+versions, unknown or duplicate references, incomplete task orders, mismatched
+next actions, self/unknown dependencies, invalid provenance, and malformed
+parallel groups. Provider refusal, incomplete output, timeout, and parser failure
+must be handled by the future route before this validator is called. In every
+failure case, preserve the confirmed transcript and last valid plan.
 
 ## API routes
 
@@ -129,11 +159,64 @@ Names may change during implementation; responsibilities should remain separate.
 
 ### `POST /api/transcribe`
 
-- Accept one bounded audio upload.
-- Validate content type and size.
-- Call GPT-4o Transcribe.
-- Return transcript text and request metadata safe for diagnostics.
-- Never log raw audio or transcript contents.
+- Implemented as a Node.js Next.js route using direct server-side HTTPS to the OpenAI API.
+- Accepts one multipart `audio` upload up to 6 MiB in WebM, MP4, or Ogg form.
+- Rejects empty, oversized, unsupported, malformed, and cross-site browser requests before provider access.
+- Uses the exact `gpt-4o-transcribe` model with JSON output and a 45-second timeout.
+- Returns transcript text, model ID, and an optional provider request ID safe for diagnostics with `Cache-Control: no-store`.
+- Keeps the API key, provider error details, raw audio, and transcripts out of logs and browser bundles.
+- Remains behind the server-side `AI_FEATURES_ENABLED` emergency switch.
+
+### `POST /api/plan`
+
+- Implemented as a Node.js Next.js route using the Responses API with the
+  explicit `gpt-5.6-sol` model, `medium` reasoning, low text verbosity, strict
+  Structured Outputs, a 5,000-token output ceiling, and a 55-second timeout.
+- Accepts only same-origin JSON requests up to 128 KiB and validates the complete
+  compact task snapshot before provider access.
+- Sends no completed history, recordings, unrelated local data, tools, or
+  persisted conversation state; provider storage is disabled with `store: false`.
+- Handles provider refusal, incomplete responses, invalid JSON, schema mismatch,
+  rate limits, network failure, and timeout with safe retry guidance.
+- Returns only validated planning output, actual model ID, optional request ID,
+  and token counts with `Cache-Control: no-store`; provider errors and credentials
+  remain server-side.
+
+### Interpretation review and commit
+
+- A confirmed transcript is saved to IndexedDB before `/api/plan` is called.
+- The existing plan stays visible with an updating indicator while GPT-5.6
+  reasons and while the interpretation is reviewed.
+- Extracted titles, notes, effort estimates, provenance, deadlines, assumptions,
+  and essential clarifications are visible. Titles, notes, and effort are editable.
+- Important assumptions require explicit confirmation. Blocking clarifications
+  require transcript revision rather than guessing.
+- Temporary model references are mapped to client-generated task IDs only after
+  review. New tasks and the replacement plan are then committed atomically.
+- A stale revision, provider failure, or client validation failure preserves both
+  the confirmed transcript and previous valid plan.
+
+### Task actions and replanning
+
+- Complete, postpone, restore, edit, and delete are local-first user actions.
+- Each action commits before network access and immediately derives a complete
+  provisional order for the new revision; no AI call is made when no active task remains.
+- Replanning sends only the resulting active tasks with `operation: replan` and
+  a null transcript. Structured-output validation rejects new tasks or transcript
+  clarifications in this mode.
+- A newer task action aborts the older client request. The IndexedDB revision
+  check is the authoritative second guard if an aborted response still arrives.
+- Provider failure leaves the confirmed mutation and provisional order intact,
+  stops the updating indicator, and exposes an explicit retry action.
+
+### Transcript-review recovery
+
+- One home-screen action requests microphone access and begins a bounded 90-second recording.
+- Cancelled or superseded permission requests cannot reopen recording later.
+- After stop, the temporary Blob is sent to `/api/transcribe` and retained only in memory until transcription succeeds or the user discards it.
+- Network, timeout, provider, or rate-limit failures preserve the Blob for explicit retry.
+- Successful text is editable only as transcript correction; this is not a parallel text-capture path.
+- Only user-confirmed transcript text is persisted to IndexedDB; successful audio is released.
 
 ### `POST /api/plan`
 
@@ -150,7 +233,10 @@ Names may change during implementation; responsibilities should remain separate.
 - Inform users that audio/transcript content is sent to OpenAI for processing.
 - Do not intentionally retain audio after successful transcription.
 - Exclude recordings, transcripts, task contents, and secrets from application logs and analytics.
-- Provide a delete-all-local-data action.
+- The privacy panel explains local storage, temporary audio, planning inputs,
+  throttling, and the limits of local deletion.
+- Delete-all clears transcripts, tasks, plans, and revision metadata in one
+  IndexedDB transaction after a second explicit confirmation.
 - Keep OpenAI keys only in Netlify environment variables.
 - Validate inputs and outputs at every trust boundary.
 - Use HTTPS, restrictive CORS behavior, request throttling, timeouts, and request-size limits.
@@ -165,7 +251,16 @@ Names may change during implementation; responsibilities should remain separate.
 - No uncontrolled retries or background polling.
 - Use fixtures and mocked provider boundaries during routine tests.
 - Configure OpenAI project usage alerts/budget controls.
-- Add server-side throttling and an emergency kill switch.
+- Both paid routes enforce separate fixed-window per-client limits before
+  provider access. Defaults are 6 transcriptions and 20 planning requests per
+  10 minutes and can be lowered through deployment environment variables.
+- Rate-limit responses use HTTP 429 with `Retry-After` and remaining-limit headers.
+- `AI_FEATURES_ENABLED=false` is the authoritative server-side emergency switch.
+  Capture checks `/api/ai-status` before requesting microphone permission, while
+  each paid POST route independently rechecks the switch.
+- The in-memory limiter is best effort per warm serverless instance, not a
+  durable global quota. The kill switch and OpenAI project budget/usage controls
+  remain the authoritative protection against distributed abuse.
 
 ## Failure strategy
 
@@ -189,15 +284,22 @@ Names may change during implementation; responsibilities should remain separate.
 
 ## Deployment
 
-- Public Netlify HTTPS deployment.
+- Public Netlify HTTPS deployment: https://flownee-build-week.netlify.app
 - No account, payment, invitation, or user-provided API key.
 - Deployment remains available through the end of judging.
 - Provide fictional sample input as a fallback demonstration path.
 
+## PWA caching baseline
+
+- The web manifest and app icon are generated from repository-owned assets.
+- The production service worker caches only the public shell fallback and app icon.
+- Same-origin API routes, non-GET requests, and cross-origin requests bypass the service worker completely.
+- Navigation uses the network when available and falls back to the cached public shell when offline.
+- User tasks, transcripts, and execution plans are never written to the Cache API; IndexedDB remains their intended local store.
+
 ## Architectural decisions still to resolve during implementation
 
-- Exact IndexedDB wrapper or direct API use.
-- Exact GPT-5.6 family model ID and reasoning configuration after a small quality/cost evaluation.
+- Whether fixture results justify lowering GPT-5.6 reasoning effort after the initial `gpt-5.6-sol`/`medium` baseline run.
 - Exact audio MIME formats supported per target browser.
 - Netlify-compatible request-body limits for recorded audio.
-- PWA/service-worker strategy that avoids caching sensitive API responses.
+- Production cache versioning and update UX beyond the safe shell-only service-worker baseline.

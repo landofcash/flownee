@@ -75,10 +75,10 @@ Acceptance:
 
 Deliverables:
 
-- Complete, postpone, edit, and delete actions.
-- Immediate local UI update plus replanning where required.
-- Stale-response protection when state changes during a request.
-- Cost controls, throttling, timeouts, and emergency kill switch.
+- [x] Complete, postpone, edit, and delete actions.
+- [x] Immediate local UI update plus replanning where required.
+- [x] Stale-response protection when state changes during a request.
+- [x] Cost controls, throttling, timeouts, and emergency kill switch.
 
 Acceptance:
 

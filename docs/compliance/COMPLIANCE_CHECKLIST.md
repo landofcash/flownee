@@ -18,10 +18,10 @@ Status values: `TODO`, `IN PROGRESS`, `PASS`, `BLOCKED`, `N/A`.
 | Requirement | Status | Evidence | Owner | Last verified |
 |---|---|---|---|---|
 | Codex is used throughout development | IN PROGRESS | Codex task history; later session log | Team | 2026-07-18 |
-| GPT-5.6 performs central product reasoning | TODO | Implementation and tests | Mike | |
-| GPT-4o Transcribe handles voice input | TODO | Implementation and tests | Mike | |
-| Project is working and non-trivial | TODO | Deployment and test report | Team | |
-| Project installs/runs consistently on intended platforms | TODO | Browser/PWA test matrix | Mike | |
+| GPT-5.6 performs central product reasoning | PASS | Protected planning route, strict contract, fixtures, and automated tests | Mike | 2026-07-18 |
+| GPT-4o Transcribe handles voice input | PASS | Protected transcription route, transcript review, and automated tests | Mike | 2026-07-18 |
+| Project is working and non-trivial | PASS | Public deployment, 54 automated tests, production build, and `docs/technical/PLATFORM_TEST_MATRIX.md` | Team | 2026-07-18 |
+| Project installs/runs consistently on intended platforms | IN PROGRESS | `docs/technical/PLATFORM_TEST_MATRIX.md`; Windows Chrome-engine evidence complete, physical Android and other target browsers remain | Mike | 2026-07-18 |
 | Behavior matches demo and written description | TODO | Final cross-check | Team | |
 | Stage One theme and technology gate passes | TODO | Scorecard review | Team | |
 
@@ -35,8 +35,8 @@ Status values: `TODO`, `IN PROGRESS`, `PASS`, `BLOCKED`, `N/A`.
 | README has setup and run instructions | PASS | `README.md`; clean lockfile verification | Mike | 2026-07-18 |
 | README includes sample data when needed | TODO | README/sample fixture | Mike | |
 | README documents Codex acceleration and human decisions | TODO | `README.md` | Team | |
-| Public Netlify deployment is available | TODO | Deployment URL | Mike | |
-| Judges need no account, payment, invitation, or API key | TODO | Signed-out test | Team | |
+| Public Netlify deployment is available | PASS | https://flownee-build-week.netlify.app; deploy `6a5be6cc5715099f9535f7b8` | Mike | 2026-07-18 |
+| Judges need no account, payment, invitation, or API key | PASS | Signed-out HTTPS checks returned 200 for the app, demo, PWA assets, diagnostic, and AI status | Team | 2026-07-18 |
 | Judge access remains active through judging | TODO | Hosting/API budget check | Mike | |
 | Testing instructions reproduce critical journey | TODO | `TESTING_INSTRUCTIONS.md` | Team | |
 
@@ -65,7 +65,7 @@ Status values: `TODO`, `IN PROGRESS`, `PASS`, `BLOCKED`, `N/A`.
 | OpenAI and other service terms are followed | TODO | Terms review | Team | |
 | Originality and team ownership are confirmed | TODO | Final declaration | Team | |
 | No unauthorized trademarks, music, images, or data are used | TODO | Rights audit | Victoria | |
-| Audio is not intentionally retained after transcription | TODO | Implementation and privacy test | Mike | |
-| Logs exclude recordings, transcripts, task content, and secrets | TODO | Logging review | Mike | |
-| Delete-all-local-data control works | TODO | Test result | Mike | |
-| API request throttling and budget protection work | TODO | Configuration/test | Mike | |
+| Audio is not intentionally retained after transcription | PASS | Temporary Blob lifecycle and privacy panel; mocked route/browser verification | Mike | 2026-07-18 |
+| Logs exclude recordings, transcripts, task content, and secrets | PASS | Server/client implementation review; provider tests verify credential exclusion | Mike | 2026-07-18 |
+| Delete-all-local-data control works | PASS | Atomic repository test and browser two-step deletion verification | Mike | 2026-07-18 |
+| API request throttling and budget protection work | PASS | Configurable 429 limiter tests, route switch tests, and `AI_FEATURES_ENABLED` kill switch | Mike | 2026-07-18 |
