@@ -211,6 +211,58 @@ describe("Flownee IndexedDB", () => {
     repository.close();
   });
 
+  it("cleans all completed items atomically without changing active work", async () => {
+    const repository = await FlowneeRepository.open({ factory, name: databaseName });
+    const completedOne = makeTask({ id: "completed-1", status: "completed" });
+    const completedTwo = makeTask({ id: "completed-2", status: "completed" });
+    await repository.commitTasksAndPlan(
+      [makeTask(), completedOne, completedTwo],
+      makePlan(),
+    );
+
+    await repository.applyTaskMutation(
+      { kind: "delete-completed" },
+      { changedAt: "2026-07-18T15:05:00.000Z", idFactory: () => "provisional-clean" },
+    );
+
+    const snapshot = await repository.loadSnapshot();
+    expect(snapshot.taskRevision).toBe(2);
+    expect(snapshot.tasks.map((task) => task.id)).toEqual(["task-1"]);
+    expect(snapshot.currentPlan).toMatchObject({
+      taskOrder: ["task-1"],
+      basedOnRevision: 2,
+      model: "local-provisional",
+    });
+    repository.close();
+  });
+
+  it("restores all postponed items atomically with one provisional plan", async () => {
+    const repository = await FlowneeRepository.open({ factory, name: databaseName });
+    const laterOne = makeTask({ id: "later-1", status: "postponed" });
+    const laterTwo = makeTask({ id: "later-2", status: "postponed" });
+    await repository.saveTasks([laterOne, laterTwo]);
+    expect((await repository.loadSnapshot()).taskRevision).toBe(1);
+
+    await repository.applyTaskMutation(
+      { kind: "restore-postponed" },
+      { changedAt: "2026-07-18T15:05:00.000Z", idFactory: () => "provisional-restore" },
+    );
+
+    const snapshot = await repository.loadSnapshot();
+    expect(snapshot.taskRevision).toBe(2);
+    expect(snapshot.tasks).toEqual([
+      expect.objectContaining({ id: "later-1", status: "active" }),
+      expect.objectContaining({ id: "later-2", status: "active" }),
+    ]);
+    expect(snapshot.currentPlan).toMatchObject({
+      taskOrder: ["later-1", "later-2"],
+      nextTaskId: "later-1",
+      basedOnRevision: 2,
+      model: "local-provisional",
+    });
+    repository.close();
+  });
+
   it("rejects an AI plan returned for the revision before a newer task action", async () => {
     const repository = await FlowneeRepository.open({ factory, name: databaseName });
     await repository.commitTasksAndPlan([makeTask()], makePlan());

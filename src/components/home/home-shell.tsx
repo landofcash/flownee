@@ -34,7 +34,10 @@ import {
 import { buildPlanningCommit } from "@/lib/ai/planning-commit";
 import { parsePlanningOutput } from "@/lib/ai/planning-contract";
 import { createReplanningRequest } from "@/lib/ai/planning-request";
-import { FlowneeRepository } from "@/lib/storage/database";
+import {
+  FlowneeRepository,
+  type TaskMutation,
+} from "@/lib/storage/database";
 import type { FlowneeSnapshot, Task } from "@/lib/storage/schema";
 import { effortLabel } from "@/lib/effort-options";
 
@@ -262,8 +265,30 @@ function UpcomingCard({ state, onManage }: { state: HomeState; onManage?: (taskI
   );
 }
 
-export function SavedItemsCard({ tasks, onManage }: { tasks: Task[]; onManage: (taskId: string) => void }) {
+type SavedItemsCardProps = {
+  tasks: Task[];
+  busy: boolean;
+  confirmCleanDone: boolean;
+  onManage: (taskId: string) => void;
+  onRequestCleanDone: () => void;
+  onCancelCleanDone: () => void;
+  onConfirmCleanDone: () => void;
+  onRestoreLater: () => void;
+};
+
+export function SavedItemsCard({
+  tasks,
+  busy,
+  confirmCleanDone,
+  onManage,
+  onRequestCleanDone,
+  onCancelCleanDone,
+  onConfirmCleanDone,
+  onRestoreLater,
+}: SavedItemsCardProps) {
   if (tasks.length === 0) return null;
+  const completedCount = tasks.filter((task) => task.status === "completed").length;
+  const postponedCount = tasks.filter((task) => task.status === "postponed").length;
   return (
     <Card className="mt-5 gap-3 py-5 shadow-none">
       <CardHeader className="px-5">
@@ -290,6 +315,49 @@ export function SavedItemsCard({ tasks, onManage }: { tasks: Task[]; onManage: (
             </li>
           ))}
         </ul>
+        <div className="mt-4 flex flex-wrap gap-2 border-t pt-4">
+          <Button
+            disabled={busy || completedCount === 0}
+            onClick={onRequestCleanDone}
+          >
+            Clean done
+          </Button>
+          <Button
+            disabled={busy || postponedCount === 0}
+            onClick={onRestoreLater}
+          >
+            Restore for later
+          </Button>
+        </div>
+        {confirmCleanDone && (
+          <div
+            aria-label="Confirm cleaning completed items"
+            className="mt-3 rounded-xl border border-error/30 bg-error/10 p-3"
+            role="group"
+          >
+            <p className="text-sm text-foreground">
+              Permanently remove {completedCount === 1 ? "this completed item" : `all ${completedCount} completed items`}?
+            </p>
+            <div className="mt-3 flex flex-wrap gap-2">
+              <Button
+                disabled={busy || completedCount === 0}
+                variant="destructive"
+                size="sm"
+                onClick={onConfirmCleanDone}
+              >
+                Confirm clean done
+              </Button>
+              <Button
+                disabled={busy}
+                variant="outline"
+                size="sm"
+                onClick={onCancelCleanDone}
+              >
+                Cancel
+              </Button>
+            </div>
+          </div>
+        )}
       </CardContent>
     </Card>
   );
@@ -307,6 +375,7 @@ export function HomeShell({
   const [actionBusy, setActionBusy] = useState(false);
   const [actionError, setActionError] = useState("");
   const [planningError, setPlanningError] = useState("");
+  const [confirmCleanDone, setConfirmCleanDone] = useState(false);
   const replanAttemptRef = useRef(0);
   const replanAbortRef = useRef<AbortController | null>(null);
 
@@ -387,7 +456,10 @@ export function HomeShell({
     }
   }, []);
 
-  async function mutateTask(mutation: { kind: "upsert"; task: Task } | { kind: "delete"; taskId: string }) {
+  async function mutateTask(
+    mutation: TaskMutation,
+    { replan = true }: { replan?: boolean } = {},
+  ) {
     if (!useLocalData) return;
     setActionBusy(true);
     setActionError("");
@@ -402,8 +474,9 @@ export function HomeShell({
       setSnapshot(nextSnapshot);
       setState(homeStateFromSnapshot(nextSnapshot));
       setSelectedTask(null);
+      setConfirmCleanDone(false);
       setActionBusy(false);
-      void requestReplan(nextSnapshot);
+      if (replan) void requestReplan(nextSnapshot);
     } catch (error) {
       setActionError(error instanceof Error ? error.message : "That change could not be saved on this device.");
       setActionBusy(false);
@@ -494,7 +567,22 @@ export function HomeShell({
           </p>
         )}
 
-        {useLocalData && <SavedItemsCard tasks={savedTasks} onManage={openTask} />}
+        {useLocalData && (
+          <SavedItemsCard
+            tasks={savedTasks}
+            busy={actionBusy}
+            confirmCleanDone={confirmCleanDone}
+            onManage={openTask}
+            onRequestCleanDone={() => setConfirmCleanDone(true)}
+            onCancelCleanDone={() => setConfirmCleanDone(false)}
+            onConfirmCleanDone={() =>
+              void mutateTask({ kind: "delete-completed" }, { replan: false })
+            }
+            onRestoreLater={() =>
+              void mutateTask({ kind: "restore-postponed" })
+            }
+          />
+        )}
 
         <div className="mt-6 flex items-start gap-2 text-xs leading-5 text-muted-foreground">
           <CircleDot aria-hidden="true" className="mt-0.5 size-3.5 shrink-0" />

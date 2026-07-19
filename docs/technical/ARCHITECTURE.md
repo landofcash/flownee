@@ -119,6 +119,7 @@ Repository guarantees:
 
 - Confirmed transcripts can be saved independently of later reasoning.
 - Task actions atomically mutate or delete the item, clean dependency links to newly inactive items, increment the collection revision, and write a valid provisional plan before replanning.
+- Saved-item bulk actions atomically delete all completed items or restore all postponed items with one collection-revision increment; restoring active work creates one provisional plan and one replanning request, while cleaning completed history does not make an unnecessary model call.
 - A plan replaces the current valid plan only when its revision matches the current task revision.
 - New tasks and their plan can be committed atomically in one transaction.
 - Plans include every active task exactly once, exclude inactive tasks, and place `nextTaskId` first.

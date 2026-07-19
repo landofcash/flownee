@@ -4,6 +4,25 @@ Use this file to preserve evidence of Codex contributions and human judgment. Do
 
 The `/feedback` Session ID required by the hackathon must come from the project task where most core functionality is built. A baseline or documentation session should not be presented as that session unless it genuinely contains the majority of core functionality.
 
+## 2026-07-19 — saved-items bulk controls
+
+- Session ID: `TBD` (supporting local-first task-state management)
+- Objective: Add bulk controls beneath `Saved items` for removing completed history and restoring postponed work.
+- Codex contributions:
+  - Added matching primary `Clean done` and `Restore for later` controls with status-aware disabled states.
+  - Added an explicit destructive confirmation before cleaning completed items.
+  - Extended the IndexedDB mutation contract so both actions operate atomically on the current stored collection rather than looping over stale UI items.
+  - Preserved dependency cleanup, revision checks, provisional planning, request abortion, and stale-response protection.
+  - Avoided an unnecessary GPT-5.6 call when only completed history is removed; restored work triggers one replan.
+  - Added repository and component regression coverage for atomic behavior, revision counts, button variants, and confirmation.
+- Human product and engineering decisions preserved:
+  - Victoria selected both labels, placed the controls after the saved-items list, requested matching colors, confirmed that `Clean done` removes completed items, and confirmed that `Restore for later` returns all postponed items to the active flow.
+- Verification:
+  - Local light and dark browser checks show both controls after the saved-items list with matching `rgb(82, 90, 255)` backgrounds and no horizontal overflow.
+  - The clean confirmation opens and cancels safely; the completed and postponed browser fixtures remain present afterward. The destructive confirmation and restore action were not executed during visual QA.
+  - 28 test files and 89 tests, lint, and production build pass.
+  - Commit and production deployment intentionally await separate product-owner approval.
+
 ## 2026-07-19 — completed saved-item treatment
 
 - Session ID: `TBD` (supporting home-screen state clarity)

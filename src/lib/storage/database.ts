@@ -31,7 +31,9 @@ type OpenDatabaseOptions = {
 
 export type TaskMutation =
   | { kind: "upsert"; task: Task }
-  | { kind: "delete"; taskId: string };
+  | { kind: "delete"; taskId: string }
+  | { kind: "delete-completed" }
+  | { kind: "restore-postponed" };
 
 export const LOCAL_PROVISIONAL_PLAN_MODEL = "local-provisional";
 
@@ -263,21 +265,63 @@ export class FlowneeRepository {
       readRevision(metadataStore),
     ]);
     const tasksById = new Map(storedTasks.map((task) => [task.id, task]));
-    const targetId = mutation.kind === "upsert" ? mutation.task.id : mutation.taskId;
+    const deletedTaskIds = new Set<string>();
+    const inactiveTargetIds = new Set<string>();
 
     try {
-      if (!tasksById.has(targetId)) throw new Error("The task no longer exists.");
-      if (mutation.kind === "upsert") tasksById.set(targetId, mutation.task);
-      else tasksById.delete(targetId);
+      if (mutation.kind === "upsert") {
+        if (!tasksById.has(mutation.task.id)) {
+          throw new Error("The task no longer exists.");
+        }
+        tasksById.set(mutation.task.id, mutation.task);
+        if (mutation.task.status !== "active") {
+          inactiveTargetIds.add(mutation.task.id);
+        }
+      } else if (mutation.kind === "delete") {
+        if (!tasksById.has(mutation.taskId)) {
+          throw new Error("The task no longer exists.");
+        }
+        tasksById.delete(mutation.taskId);
+        deletedTaskIds.add(mutation.taskId);
+        inactiveTargetIds.add(mutation.taskId);
+      } else if (mutation.kind === "delete-completed") {
+        const completedIds = [...tasksById.values()]
+          .filter((task) => task.status === "completed")
+          .map((task) => task.id);
+        if (completedIds.length === 0) {
+          throw new Error("There are no completed items to clean.");
+        }
+        for (const id of completedIds) {
+          tasksById.delete(id);
+          deletedTaskIds.add(id);
+          inactiveTargetIds.add(id);
+        }
+      } else {
+        const postponedTasks = [...tasksById.values()].filter(
+          (task) => task.status === "postponed",
+        );
+        if (postponedTasks.length === 0) {
+          throw new Error("There are no later items to restore.");
+        }
+        for (const task of postponedTasks) {
+          tasksById.set(task.id, {
+            ...task,
+            status: "active",
+            updatedAt: changedAt,
+          });
+        }
+      }
 
-      const targetBecameInactive =
-        mutation.kind === "delete" || mutation.task.status !== "active";
-      if (targetBecameInactive) {
+      if (inactiveTargetIds.size > 0) {
         for (const [id, task] of tasksById) {
-          if (!task.dependencies.includes(targetId)) continue;
+          if (!task.dependencies.some((dependency) => inactiveTargetIds.has(dependency))) {
+            continue;
+          }
           tasksById.set(id, {
             ...task,
-            dependencies: task.dependencies.filter((dependency) => dependency !== targetId),
+            dependencies: task.dependencies.filter(
+              (dependency) => !inactiveTargetIds.has(dependency),
+            ),
             updatedAt: changedAt,
           });
         }
@@ -315,7 +359,7 @@ export class FlowneeRepository {
       planStore.put(provisionalPlan);
     }
 
-    if (mutation.kind === "delete") taskStore.delete(mutation.taskId);
+    for (const id of deletedTaskIds) taskStore.delete(id);
     for (const task of tasksById.values()) taskStore.put(task);
     metadataStore.put({ key: "taskRevision", value: nextRevision });
     await completion;

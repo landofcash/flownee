@@ -57,7 +57,13 @@ describe("saved items", () => {
           savedTask("completed", "Completed intention", "completed"),
           savedTask("postponed", "Postponed intention", "postponed"),
         ]}
+        busy={false}
+        confirmCleanDone={false}
         onManage={vi.fn()}
+        onRequestCleanDone={vi.fn()}
+        onCancelCleanDone={vi.fn()}
+        onConfirmCleanDone={vi.fn()}
+        onRestoreLater={vi.fn()}
       />,
     );
     const completedTitle = markup.match(
@@ -70,5 +76,25 @@ describe("saved items", () => {
     expect(completedTitle?.[1]).toContain("line-through");
     expect(completedTitle?.[1]).toContain("text-muted-foreground");
     expect(postponedTitle?.[1]).not.toContain("line-through");
+    expect(markup).toMatch(/data-variant="default"[^>]*>Clean done<\/button>/);
+    expect(markup).toMatch(/data-variant="default"[^>]*>Restore for later<\/button>/);
+  });
+
+  it("shows an explicit confirmation before cleaning completed items", () => {
+    const markup = renderToStaticMarkup(
+      <SavedItemsCard
+        tasks={[savedTask("completed", "Completed intention", "completed")]}
+        busy={false}
+        confirmCleanDone
+        onManage={vi.fn()}
+        onRequestCleanDone={vi.fn()}
+        onCancelCleanDone={vi.fn()}
+        onConfirmCleanDone={vi.fn()}
+        onRestoreLater={vi.fn()}
+      />,
+    );
+
+    expect(markup).toContain("Permanently remove this completed item?");
+    expect(markup).toContain("Confirm clean done");
   });
 });
