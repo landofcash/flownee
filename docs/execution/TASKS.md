@@ -4,7 +4,7 @@ Keep exactly one implementation task under **Now**. Move completed items to **Do
 
 ## Now
 
-- [ ] Prepare the final Codex session evidence, scorecard, demo script, and Devpost draft.
+- [ ] Prepare the final Codex session evidence, demo script, and Devpost draft.
 
 ## Next
 

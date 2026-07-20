@@ -23,7 +23,7 @@ Status values: `TODO`, `IN PROGRESS`, `PASS`, `BLOCKED`, `N/A`.
 | Project is working and non-trivial | PASS | Public deployment, 130 automated tests, production build, successful owner-reported physical voice/AI journeys, and `docs/technical/PLATFORM_TEST_MATRIX.md` | Team | 2026-07-20 |
 | Project installs/runs consistently on intended platforms | IN PROGRESS | `docs/technical/PLATFORM_TEST_MATRIX.md`; physical Redmi Note 12 Pro 5G installed-app/Chrome journey and iPhone 17/12/8 Safari journeys pass; Windows Chrome full journey, macOS Chrome, and Windows Edge remain | Mike | 2026-07-20 |
 | Behavior matches demo and written description | TODO | Final cross-check | Team | |
-| Stage One theme and technology gate passes | TODO | Scorecard review | Team | |
+| Stage One theme and technology gate passes | PASS | Direct Apps for Your Life fit, substantive Codex use, central GPT-5.6 reasoning, and working non-trivial public product verified against the official criteria | Team | 2026-07-20 |
 
 ## Repository and testing
 
