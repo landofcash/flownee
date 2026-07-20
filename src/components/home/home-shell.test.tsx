@@ -268,7 +268,7 @@ describe("home accessibility frame", () => {
 
     expect(markup).toContain("<h1");
     expect(markup).toContain("<h1");
-    expect(markup).toContain("text-center text-lg font-medium text-primary");
+    expect(markup).toContain("text-center text-base font-medium text-primary");
     expect(markup).toContain(
       'aria-label="YOUR FLOW. WHAT MAKES SENSE NEXT"',
     );

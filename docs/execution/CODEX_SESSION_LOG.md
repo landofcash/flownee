@@ -4,6 +4,21 @@ Use this file to preserve evidence of Codex contributions and human judgment. Do
 
 The `/feedback` Session ID required by the hackathon must come from the project task where most core functionality is built. A baseline or documentation session should not be presented as that session unless it genuinely contains the majority of core functionality.
 
+## 2026-07-20 — smaller home heading
+
+- Session ID: `TBD` (supporting compact visual hierarchy)
+- Objective: Make the animated home heading slightly smaller without changing its behavior or layout.
+- Codex contributions:
+  - Reduced `YOUR FLOW. WHAT MAKES SENSE NEXT` from `18px` to `16px` through the existing Tailwind typography scale.
+  - Preserved its centered uppercase Hyper Text reveal, `1600ms` duration, medium weight, primary violet color, reduced-motion behavior, and accessible label.
+- Human product and design decisions preserved:
+  - Victoria approved `16px` while keeping all surrounding spacing and layout unchanged.
+- Verification:
+  - Regression coverage asserts the new `text-base` typography contract.
+  - Local computed styles report `16px`, weight `500`, centered alignment with a zero-pixel center delta, one-line presentation within the `428.4px` mobile-width application shell, and zero horizontal overflow at a `1280px` viewport.
+  - 35 test files and 130 tests pass; ESLint passes with zero warnings; the optimized Next.js build and TypeScript phase pass.
+  - No recording, task action, paid AI request, commit, push, merge, or deployment occurred.
+
 ## 2026-07-20 — sticky shared header
 
 - Session ID: `TBD` (supporting navigation accessibility)

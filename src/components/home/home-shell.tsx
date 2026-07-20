@@ -773,7 +773,7 @@ export function HomeShell({
           <HyperText
             animateOnHover={false}
             as="h1"
-            className="text-center text-lg font-medium text-primary"
+            className="text-center text-base font-medium text-primary"
             duration={1600}
           >
             YOUR FLOW. WHAT MAKES SENSE NEXT
