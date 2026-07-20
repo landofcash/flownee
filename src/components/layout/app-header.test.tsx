@@ -18,6 +18,9 @@ describe("AppHeader", () => {
     expect(markup).toContain('aria-label="Settings"');
     expect(markup).toContain('href="/settings"');
     expect(markup).toContain('aria-label="Switch to dark mode"');
+    expect(markup.match(/data-size="icon-lg"/g)).toHaveLength(3);
+    expect(markup).toContain('width="60"');
+    expect(markup).toContain('height="17"');
   });
 
   it("renders optional page actions", () => {

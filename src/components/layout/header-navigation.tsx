@@ -15,7 +15,7 @@ export function HeaderNavigation() {
   const pathname = usePathname();
 
   return (
-    <nav aria-label="Support and settings" className="flex items-center gap-1">
+    <nav aria-label="Support and settings" className="flex items-center">
       {headerLinks.map((item) => {
         const Icon = item.icon;
         const active = pathname === item.href;
@@ -25,7 +25,7 @@ export function HeaderNavigation() {
             key={item.href}
             asChild
             variant={active ? "secondary" : "ghost"}
-            size="icon-sm"
+            size="icon-lg"
           >
             <Link
               href={item.href}

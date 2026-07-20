@@ -16,29 +16,29 @@ export function AppHeader({ actions, contentClassName }: AppHeaderProps) {
     <header className="border-b border-border/70 bg-surface/85 backdrop-blur-lg">
       <div
         className={cn(
-          "mx-auto flex h-16 items-center justify-between px-4 sm:px-6",
+          "mx-auto flex h-16 items-center justify-between gap-1 px-3 min-[360px]:px-4 sm:px-6",
           contentClassName,
         )}
       >
         <Link
           href="/"
           aria-label="Flownee home"
-          className="flex min-h-11 items-center gap-2.5 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+          className="flex min-h-11 shrink-0 items-center gap-1.5 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
         >
           <Image
             src="/flownee-mark-v2.png"
             alt=""
             aria-hidden="true"
-            width={80}
-            height={22}
+            width={60}
+            height={17}
             priority
-            className="h-auto w-20 shrink-0"
+            className="h-auto w-15 shrink-0"
           />
           <span className="text-lg font-semibold tracking-[-0.025em]">
             Flownee
           </span>
         </Link>
-        <div className="flex items-center gap-1 sm:gap-2">
+        <div className="flex shrink-0 items-center gap-0.5">
           <HeaderNavigation />
           {actions}
           <ThemeToggle />

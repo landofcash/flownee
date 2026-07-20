@@ -14,5 +14,6 @@ describe("HeaderNavigation", () => {
     expect(markup).toContain('aria-current="page"');
     expect(markup).toContain('href="/settings"');
     expect(markup).toContain('aria-label="Settings"');
+    expect(markup.match(/data-size="icon-lg"/g)).toHaveLength(2);
   });
 });

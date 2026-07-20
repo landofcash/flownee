@@ -4,6 +4,237 @@ Use this file to preserve evidence of Codex contributions and human judgment. Do
 
 The `/feedback` Session ID required by the hackathon must come from the project task where most core functionality is built. A baseline or documentation session should not be presented as that session unless it genuinely contains the majority of core functionality.
 
+## 2026-07-20 — capture-artwork cache invalidation
+
+- Session ID: `TBD` (supporting product-owner-directed visual refinement)
+- Objective: Ensure the latest edited capture artwork is unmistakably loaded locally instead of a cached optimized response.
+- Codex contributions:
+  - Preserved `main-brain.png` and created an exact binary copy at `main-brain-v2.png`.
+  - Updated the base-image constant and regression assertion to the versioned public URL.
+- Human product and design decisions preserved:
+  - Victoria requested filename-based cache invalidation and approved preserving the existing asset rather than overwriting or deleting it.
+  - Artwork content, overlay timing, layout, voice behavior, and AI behavior remain unchanged.
+- Verification:
+  - The browser renders `/_next/image?url=%2Fimages%2Fflownee%2Fmain-brain-v2.png&w=640&q=75`; the image loads at `365x227` with zero horizontal overflow.
+  - 34 test files and 123 tests pass; the optimized Next.js production build and its application TypeScript phase pass.
+  - The brief recording state used for the real-dialog URL check was cancelled before transcription or upload. No paid AI request, task mutation, commit, push, merge, or deployment occurred.
+
+## 2026-07-20 — supplied main-brain capture artwork
+
+- Session ID: `TBD` (supporting product-owner-directed visual refinement)
+- Objective: Use the supplied `main-brain.png` as the fixed Flownee illustration in the initial voice-capture dialog.
+- Codex contributions:
+  - Verified the supplied asset is a `1240x773` RGBA PNG with real transparency and an aspect ratio aligned with the existing illustration frame.
+  - Replaced only the exported base-image path and updated its regression assertion.
+- Human product and design decisions preserved:
+  - Victoria selected `main-brain.png` after reviewing the previous transparent base.
+  - The four intention overlays, two-second cycling, layout, spacing, microphone, copy, recording behavior, and AI behavior remain unchanged.
+- Verification:
+  - Local light/dark checks confirm `/images/flownee/main-brain.png` loads at the expected responsive dimensions, its thought clouds align with each rotating intention layer, the dialog remains `430px` wide, and horizontal overflow is zero; light mode was restored afterward.
+  - 34 test files and 123 tests pass; ESLint passes with zero warnings; the optimized Next.js production build and its application TypeScript phase pass.
+  - Two brief recording states were used to inspect the real dialog and were cancelled before transcription or upload. No paid AI request, task mutation, commit, push, merge, or deployment occurred.
+
+## 2026-07-20 — transparent, evenly colored capture illustration
+
+- Session ID: `TBD` (supporting product-owner-directed visual refinement)
+- Objective: Replace the initial voice-capture base artwork with the supplied second Flownee brain, remove its opaque background, and make the blue fill visually even.
+- Codex contributions:
+  - Preserved the original `public/images/flownee/main 2.png` and attempted a non-destructive chroma extraction; rejected that intermediate because it retained a visible colored fringe.
+  - After Victoria approved the fallback and its small API charge, used one `gpt-image-1.5` image-edit request to produce native transparency, then deterministically flattened the interior to Flownee light blue while preserving the navy outline and internal linework.
+  - Added the final `/images/flownee/main-2-transparent.png` asset, connected it as the fixed first layer, and added a regression assertion for the exact asset path while leaving all four rotating intention layers and their two-second interval unchanged.
+  - Removed the temporary SDK, generated API output, chroma intermediate, and preview composites after validation; the earlier unreferenced `main-2.png` experiment remains untouched pending explicit product-owner direction.
+- Human product and design decisions preserved:
+  - Victoria chose the second brain artwork, approved true transparency, requested an evenly colored result, and explicitly approved the `gpt-image-1.5` fallback after the local extraction did not meet the quality bar.
+  - Dialog dimensions, artwork frame, overlay artwork, timing, microphone, copy, recording behavior, task behavior, and AI planning behavior remain unchanged.
+- Verification:
+  - The final PNG is `1536x1024` RGBA with transparent corners and an alpha-bounded illustration; white and dark compositing checks show a flat light-blue brain with intact navy lines and no opaque rectangle.
+  - Local light/dark dialog checks confirm the final Next.js image URL, all four overlay URLs, loaded dimensions, a `430px` dialog, and zero horizontal overflow; light mode was restored afterward.
+  - 34 test files and 123 tests pass; ESLint passes with zero warnings; the optimized Next.js production build, including its application TypeScript phase, passes. A separate repository-wide `tsc --noEmit` invocation still reports three pre-existing Vitest mock generic errors in server test files and was not changed as part of this visual task.
+  - Two brief local microphone sessions were triggered while opening the real capture state for visual inspection and were cancelled before transcription or upload. One paid image-edit request occurred; no transcription, GPT-5.6 planning request, task mutation, commit, push, merge, or deployment occurred.
+
+## 2026-07-20 — design-v2 repeating Shine Border refinement
+
+- Session ID: `TBD` (supporting mobile usability and restrained interface polish)
+- Objective: Make the approved Shine Border discoverable without turning it into continuous visual noise.
+- Codex contributions:
+  - Added a reusable repeating Shine Border mode with a five-second CSS cycle: approximately 2.5 seconds of movement followed by approximately 2.5 seconds fully invisible.
+  - Connected the new cycle to the circular microphone and enabled current-task `Done` controls while retaining the original reusable one-pass and continuous modes.
+  - Expanded component coverage and verified computed duration, infinite iteration, disabled-state absence, pointer-event isolation, control sizing, and overflow locally.
+- Human product and design decisions preserved:
+  - Victoria reported that the one-time treatment was not visible in practical review and approved a five-second repeat plan.
+  - Disabled `Done`, reduced-motion behavior, solid colors, dimensions, handlers, focus treatment, confetti, task logic, persistence, recording, and AI behavior remain unchanged.
+- Verification:
+  - 34 test files and 123 tests pass; ESLint passes with zero warnings; TypeScript and the optimized Next.js production build pass.
+  - The sample page shows a `5s` infinite microphone cycle and no disabled `Done` overlay; the normal local page shows the same cycle on enabled `Done`, which remains 44px high; no horizontal overflow appears.
+  - No commit, push, merge, deployment, recording, task mutation, completion click, or paid AI request occurred.
+
+## 2026-07-20 — design-v2 Gate 2 final audit
+
+- Session ID: `TBD` (supporting mobile usability and restrained interface polish)
+- Objective: Close Gate 2 with auditable reduced-motion, accessibility, performance, responsive, and regression evidence.
+- Codex contributions:
+  - Introduced a small internal persistence-feedback seam and executable tests proving successful ordering, failure suppression, non-completion suppression, and exactly-once queue release without changing product behavior.
+  - Audited Shine Border and Confetti for focus isolation, pointer-event isolation, reduced-motion handling, worker stability, timers, event listeners, rerenders, and overlay layering.
+  - Ran local responsive checks at 320px, 360px, 390px, 430px, and centered desktop, including light/dark previews, home action sizing, disabled-state behavior, and the blocking update demonstration.
+  - Inspected optimized route manifests and confetti signatures to confirm one implementation per independently loaded home or design-system route and no within-route duplication.
+- Human product and design decisions preserved:
+  - Victoria approved the final Gate 2 audit plan after separately approving each prior Gate 2 implementation step.
+  - No additional animation, component redesign, user-flow change, task mutation, paid request, or production action was introduced during the audit.
+  - Commit, merge into `main`, push, and deployment remain separate decisions after local product-owner acceptance.
+- Verification:
+  - 34 test files and 122 tests pass; ESLint passes with zero warnings; TypeScript and the optimized Next.js production build pass.
+  - One `aria-hidden`, pointer-events-free canvas renders at every tested width; the preview target is 44px, microphone is 64px, voice action is 96px, the blocking overlay (`80`) remains above confetti (`70`), light/dark colors remain readable, and no tested viewport has horizontal overflow.
+  - The browser surface did not expose reduced-motion media emulation. Reduced-motion evidence comes from executable trigger tests, `canvas-confetti`'s `disableForReducedMotion` option, `motion-reduce:hidden`, and CSS inspection; no visual emulation pass is claimed.
+  - The normal viewport and light theme were restored. No commit, push, merge, deployment, recording, task mutation, completion click, or paid AI request occurred.
+
+## 2026-07-20 — design-v2 Gate 2 completion feedback
+
+- Session ID: `TBD` (supporting restrained interface polish)
+- Objective: Add brief, reliable completion feedback without changing task behavior or exposing user data during verification.
+- Codex contributions:
+  - Connected the staged Magic UI Confetti primitive to a success-only completion queue after IndexedDB mutation and snapshot reload.
+  - Delayed the visible burst until the blocking flow-update overlay closes, so processing and celebration do not compete while a successfully stored completion remains acknowledged even if later replanning fails.
+  - Defined one 36-particle burst using Flownee violet, teal, muted blue, and light blue; contained its non-interactive canvas to the 430px shell and preserved critical-dialog layering.
+  - Added explicit reduced-motion checks, the dependency's reduced-motion safeguard, stable worker options, pure trigger tests, and an internal design-system preview that touches no task or API state.
+  - Inspected optimized route chunks and verified that home and design-system each load one route-scoped implementation rather than duplicating it within a page.
+- Human product and design decisions preserved:
+  - Victoria approved Gate 2, Step 3 after reviewing the separate implementation plan and its bundle-size trade-off.
+  - Confetti is limited to current-task `Done` and dialog `Complete`; it is absent from failed storage, postpone, restore, edit, delete, clean-up, voice capture, replan completion, rerender, and refresh.
+  - The existing blocking update overlay, persistence ordering, task handlers, stale-response protections, navigation, recording, and AI boundaries remain unchanged.
+- Verification:
+  - 33 test files and 118 tests pass; ESLint passes with zero warnings; the optimized Next.js production build passes.
+  - Local light/dark preview checks confirm one contained canvas, a 44px preview target, visible restrained brand particles, pointer-event isolation, light-theme restoration, and no horizontal overflow.
+  - No commit, push, merge, deployment, recording, task mutation, production completion click, or paid AI request occurred.
+
+## 2026-07-20 — design-v2 Gate 2 restrained Shine Border
+
+- Session ID: `TBD` (supporting restrained interface polish)
+- Objective: Apply the approved Shine Border treatment without changing product behavior or expanding the MVP.
+- Codex contributions:
+  - Extended the staged Magic UI Shine Border with an explicit single-pass mode while preserving its original looping default for reusable reference use.
+  - Added one 1.5px, 2.5-second violet/teal/light-blue pass inside the enabled current-task `Done` button and fixed 64px microphone circle only.
+  - Added fade-in/fade-out keyframes, pointer-event isolation, reduced-motion suppression, and regression coverage for the enabled, disabled, and voice-action states.
+  - Verified the rendered duration, one-iteration behavior, dimensions, color treatment, and overflow in both Flownee themes without activating a task action.
+- Human product and design decisions preserved:
+  - Victoria approved Shine Border as Gate 2, Step 2 after reviewing its separate plan.
+  - The shine is restrained to two approved controls; it does not surround the voice panel, loop, appear on a disabled completion action, or alter handlers, layout, recording, persistence, or AI behavior.
+  - Confetti remains staged and disconnected pending a separate Gate 2, Step 3 plan and approval.
+- Verification:
+  - 32 test files and 115 tests pass; ESLint passes with zero warnings; the optimized Next.js production build passes.
+  - Local light/dark checks confirm a 44px `Done` target, 64px microphone circle, solid violet/white action colors, two non-interactive one-pass overlays, and no horizontal overflow; the initial light theme was restored.
+  - No commit, push, merge, deployment, recording, task mutation, paid AI request, or completion click occurred.
+
+## 2026-07-20 — design-v2 Gate 2 Magic UI foundation
+
+- Session ID: `TBD` (supporting restrained interface polish)
+- Objective: Stage the smallest auditable Magic UI foundation without activating any new product effect.
+- Codex contributions:
+  - Retrieved the current official Magic UI registry definitions for Shine Border and Confetti and adapted only those two source primitives into the repository.
+  - Preserved Magic UI copyright/MIT attribution in both files and documented the approved Flownee usage boundaries.
+  - Added the official shine keyframes with pointer-event isolation and reduced-motion suppression.
+  - Pinned `canvas-confetti@1.9.4` and its `@types/canvas-confetti@1.9.0` declarations; recorded the runtime package's ISC license and added no animation framework.
+  - Added focused component coverage and confirmed that the unused confetti implementation is absent from production JavaScript chunks.
+- Human product and design decisions preserved:
+  - Victoria approved Gate 2 as a sequence of separately reviewed steps rather than a broad animation pass.
+  - No shine or confetti is connected to Flownee yet; product behavior and visible UI remain unchanged until later approvals.
+- Verification:
+  - 32 test files and 112 tests pass; ESLint passes with zero warnings; the optimized Next.js production build passes.
+  - Supply-chain policy accepts the 498-entry lockfile, and the two new dependencies are pinned exactly.
+  - No visible effect, completion trigger, commit, push, merge, deployment, recording, task mutation, or paid AI request occurred.
+
+## 2026-07-20 — design-v2 Gate 1 accessibility finish
+
+- Session ID: `TBD` (supporting mobile usability redesign)
+- Objective: Finish Gate 1 with clear privacy presentation, safe fixed-action clearance, robust small-screen behavior, and consistent accessibility foundations.
+- Codex contributions:
+  - Refined the unchanged home privacy statement with a thin divider and recognizable information icon instead of the generic dot symbol.
+  - Made main bottom clearance safe-area-aware and measured the final privacy text completely above the fixed voice action at 320px.
+  - Standardized shared button and effort-option targets to at least 44px, including compact and icon-only variants, while preserving visual icon sizes.
+  - Corrected the home heading hierarchy, enabled task-dialog title wrapping, and added reduced-motion fallbacks to the remaining Flownee recording/processing demonstrations.
+  - Added regression coverage for shared touch targets, radio-label height, semantic headings, privacy treatment, safe-area CSS, and non-truncated dialog titles.
+- Human product and design decisions preserved:
+  - Victoria confirmed the circled information icon for the existing privacy note.
+  - The voice panel, privacy meaning, navigation, task actions, recording, state, persistence, and API behavior remain unchanged.
+  - Gate 2 Magic UI polish remains separate and must not begin before product-owner review of the complete Gate 1 result.
+- Verification:
+  - 31 test files and 110 tests pass; ESLint passes with zero warnings; the optimized Next.js production build passes.
+  - At 320px the fixed panel is approximately `136.8px` high, the final privacy text clears it by approximately `23.3px`, and all visible interactive targets are at least 44px; 320-430px light/dark checks show no horizontal overflow.
+  - The 320px task-management dialog has no horizontal overflow, wraps its title normally, and provides 44px visible effort labels around the intentionally screen-reader-only radio inputs.
+  - No commit, push, merge, deployment, recording, task mutation, or paid AI request occurred.
+
+## 2026-07-20 — design-v2 Gate 1 supporting sections
+
+- Session ID: `TBD` (supporting mobile usability redesign)
+- Objective: Remove the remaining home-dashboard card treatment from Up next, Saved items, and empty/loading/completed states while preserving functionality.
+- Codex contributions:
+  - Converted Up next and Saved items into labelled semantic sections with transparent backgrounds, thin separators, and unboxed list rows.
+  - Replaced the dashed upcoming empty box with muted inline text and allowed saved intention titles to wrap instead of truncating.
+  - Increased upcoming/saved management controls and both saved-item bulk actions to exact 44px targets without changing their handlers or disabled states.
+  - Converted empty, loading, and completed cards into compact borderless state sections while retaining copy, icons, `aria-busy`, loading animation, and reduced-motion behavior.
+  - Added component coverage for open structures, card absence, retained state semantics, title wrapping, and control sizing.
+- Human product and design decisions preserved:
+  - Victoria approved a continuous mobile workspace rather than stacked cards, with hierarchy provided by spacing, headings, badges, and thin dividers.
+  - Current recommendation, dialogs, task logic, persistence, privacy content, voice behavior, and API boundaries remain unchanged.
+- Verification:
+  - 30 test files and 108 tests pass; ESLint passes with zero warnings; the optimized Next.js production build passes.
+  - Local light/dark checks at 320, 360, 390, and 430px confirm transparent sections, natural wrapping, 44px controls, adequate voice-action clearance, and no horizontal overflow.
+  - No commit, push, merge, deployment, recording, task mutation, or paid AI request occurred.
+
+## 2026-07-20 — design-v2 Gate 1 open recommendation
+
+- Session ID: `TBD` (supporting mobile usability redesign)
+- Objective: Replace the card-based current recommendation with an open, continuous mobile section without changing its content or behavior.
+- Codex contributions:
+  - Replaced the recommendation card composition with a semantic labelled section using whitespace and thin dividers; the product-owner refinement removed the initial left accent and its compensating padding.
+  - Preserved the complete recommendation content, updating state, actions, handlers, disabled states, and accessible overflow control.
+  - Reduced the task title to responsive `24-30px` typography so longer intentions wrap naturally without losing visual priority.
+  - Kept Done, Do later, and more actions at exact `44px` heights and corrected their narrow-screen spacing so all three remain aligned at 320px.
+  - Added regression coverage for semantic structure, absence of the card wrapper, retained content, and action sizing.
+- Human product and design decisions preserved:
+  - Victoria approved an open workspace treatment rather than a large bordered card while retaining every existing word, action, and behavior.
+  - Up next, Saved items, supporting states, privacy presentation, and the fixed voice action remain outside this step.
+- Verification:
+  - 30 test files and 106 tests pass; ESLint passes with zero warnings; the optimized Next.js production build passes.
+  - Local light/dark checks at 320, 360, 390, and 430px confirm transparent, accent-free section treatment with zero left border or padding, natural title wrapping, one-row actions, exact 44px action heights, and no horizontal overflow.
+  - No commit, push, merge, deployment, recording, task mutation, or paid AI request occurred.
+
+## 2026-07-20 — design-v2 Gate 1 mobile header
+
+- Session ID: `TBD` (supporting mobile usability redesign)
+- Objective: Rebalance the shared mobile header and make every utility control an accessible 44px touch target without changing navigation behavior.
+- Codex contributions:
+  - Increased the Help, Settings, and light/dark controls to exact `44x44px` interactive targets while keeping their existing visual icon sizes.
+  - Reduced the approved Flownee mark to `60x17` intrinsic dimensions, tightened the mark-to-word spacing, and introduced responsive `12-16px` header padding so all controls fit at 320px.
+  - Extended component coverage to lock the logo dimensions and the three large icon-button variants.
+  - Verified active Help and Settings states, accessible labels, theme switching, and horizontal fit at 320, 360, 390, and 430px.
+- Human product and design decisions preserved:
+  - Victoria approved keeping the existing approximately 64px header height, navigation destinations, active treatment, theme persistence, colors, border, and component behavior.
+  - This step was limited to the header; current-task cards, page content, and the fixed voice action were not redesigned.
+- Verification:
+  - 30 test files and 106 tests pass; ESLint passes with zero warnings; the optimized Next.js production build passes.
+  - Local light/dark browser checks show exact 44px utility targets, a `64.8px` header, readable logo treatment, and no horizontal overflow from 320-430px.
+  - No commit, push, merge, deployment, recording, task mutation, or paid AI request occurred.
+
+## 2026-07-20 — design-v2 Gate 1 typography foundation
+
+- Session ID: `TBD` (supporting mobile usability redesign)
+- Objective: Establish the approved Plus Jakarta Sans typography foundation without changing Flownee functionality or component layout.
+- Codex contributions:
+  - Captured responsive before/after measurements at 320, 360, 390, and 430px and retained local screenshot evidence for comparison.
+  - Integrated Plus Jakarta Sans through `next/font` with `swap`, a shared Tailwind font token, and robust system fallbacks.
+  - Confirmed that the production build self-hosts generated WOFF2 assets and contains no runtime Google Fonts URLs.
+  - Checked the home sample, Help, Settings, and design-system routes for font loading, wrapping, and horizontal overflow.
+  - Recorded the 320px current-task wrapping increase for resolution during the approved current-recommendation layout step rather than expanding this task's scope.
+- Human product and design decisions preserved:
+  - Victoria divided the redesign into an essential usability gate and a later optional Magic UI gate.
+  - Step 1 was limited to baseline evidence and global typography; no spacing, component structure, or behavior was changed.
+- Licensing:
+  - Plus Jakarta Sans is published under the SIL Open Font License 1.1 by its upstream project.
+- Verification:
+  - 30 test files and 106 tests pass; ESLint passes with zero warnings; the optimized Next.js production build passes.
+  - Local 320–430px checks show the font loaded, zero horizontal overflow, and unchanged fixed voice-action dimensions and bottom placement.
+  - No commit, push, merge, deployment, recording, task mutation, or paid AI request occurred.
+
 ## 2026-07-20 — AI-selected intention emoji
 
 - Session ID: `TBD` (supporting AI interpretation and visual scanning)

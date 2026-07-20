@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 
 import { InterpretationReview } from "@/components/voice/interpretation-review";
+import { ShineBorder } from "@/components/magicui/shine-border";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import {
@@ -65,6 +66,9 @@ export const FLOWNEE_INTENTION_IMAGES = [
   "/images/flownee/intention 4.webp",
 ] as const;
 
+export const FLOWNEE_BASE_IMAGE =
+  "/images/flownee/main-brain-v2.png";
+
 export const FLOWNEE_INTENTION_INTERVAL_MS = 2000;
 
 export function nextFlowneeIntentionIndex(currentIndex: number): number {
@@ -108,7 +112,7 @@ function FlowneeIntentionIllustration() {
           fill
           priority
           sizes="(max-width: 430px) calc(100vw - 40px), 365px"
-          src="/images/flownee/main.webp"
+          src={FLOWNEE_BASE_IMAGE}
         />
         {FLOWNEE_INTENTION_IMAGES.map((src, index) => (
           <Image
@@ -480,7 +484,13 @@ export function VoiceCapture({
           aria-label="Add an intention by voice"
           onClick={() => void beginRecording()}
         >
-          <span className="absolute left-1/2 top-0 flex size-16 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-flow/70 bg-action text-action-foreground ring-4 ring-background shadow-[0_0_28px_var(--voice-glow)]">
+          <span className="absolute left-1/2 top-0 flex size-16 -translate-x-1/2 -translate-y-1/2 items-center justify-center overflow-hidden rounded-full border border-flow/70 bg-action text-action-foreground ring-4 ring-background shadow-[0_0_28px_var(--voice-glow)]">
+            <ShineBorder
+              animation="repeat"
+              borderWidth={1.5}
+              duration={5}
+              shineColor={["#8FD9FB", "#4AB5B5", "#525AFF"]}
+            />
             <Mic aria-hidden="true" className="size-7" />
           </span>
           <span className="mt-5 text-base leading-5 font-semibold">Add by voice</span>
@@ -557,7 +567,7 @@ export function VoiceCapture({
 
               {state === "recording" && (
                 <div className="flex flex-col items-center py-1 text-center">
-                  <span className="animate-flownee-gradient animate-flownee-glow flex size-20 items-center justify-center rounded-full bg-flownee-gradient p-1">
+                  <span className="animate-flownee-gradient animate-flownee-glow flex size-20 items-center justify-center rounded-full bg-flownee-gradient p-1 motion-reduce:animate-none">
                     <span className="flex size-full items-center justify-center rounded-full bg-action text-action-foreground">
                       <Mic aria-hidden="true" className="size-8" />
                     </span>
@@ -634,7 +644,7 @@ export function VoiceCapture({
 
               {state === "planning" && (
                 <div className="flex flex-col items-center py-8 text-center">
-                  <span className="animate-flownee-gradient flex size-16 items-center justify-center rounded-2xl bg-flownee-gradient p-0.5">
+                  <span className="animate-flownee-gradient flex size-16 items-center justify-center rounded-2xl bg-flownee-gradient p-0.5 motion-reduce:animate-none">
                     <span className="flex size-full items-center justify-center rounded-[0.65rem] bg-surface text-primary">
                       <Brain aria-hidden="true" className="size-7" />
                     </span>

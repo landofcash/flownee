@@ -4,6 +4,29 @@
 
 Build a vertical, testable voice-to-action slice first. Do not start optional integrations or polish until the complete critical journey works on the public deployment.
 
+## Local design-v2 release gates
+
+All redesign work remains local on `design-v2` until product-owner approval. It must not be merged into `main` or deployed during local review.
+
+### Gate 1 — Essential usability redesign
+
+1. Establish the responsive baseline and Plus Jakarta Sans typography.
+2. Rebalance the mobile header and 44px touch targets.
+3. Replace the card-based current recommendation with an open section.
+4. Flatten Up next, Saved items, empty, loading, and completed states.
+5. Refine the privacy note, fixed-action clearance, responsiveness, and accessibility.
+
+### Gate 2 — Optional Magic UI polish
+
+1. Review and import only the required Magic UI source and dependencies.
+2. Add a restrained Shine Border to approved primary actions.
+3. Add brief post-success completion confetti.
+4. Verify reduced motion, performance, accessibility, and full regression coverage.
+
+Gate 2 must not begin until Gate 1 is complete and approved. Neither gate changes task logic, voice behavior, persistence, navigation, API calls, or user flows.
+
+Gate 2 is complete locally on `design-v2`: the two approved Magic UI effects and the final reduced-motion, performance, accessibility, responsive, and regression audit pass. Commit, merge, push, and deployment remain separate product-owner decisions.
+
 ## Milestone 0 — Repository and compliance baseline
 
 Deliverables:

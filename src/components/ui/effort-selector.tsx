@@ -37,7 +37,7 @@ export function EffortSelector({
               />
               <span
                 className={cn(
-                  "flex min-h-9 items-center justify-center rounded-lg border px-2 py-1.5 text-center text-xs font-semibold transition-colors",
+                  "flex min-h-11 items-center justify-center rounded-lg border px-2 py-1.5 text-center text-xs font-semibold transition-colors",
                   "peer-focus-visible:ring-2 peer-focus-visible:ring-ring peer-focus-visible:ring-offset-2",
                   selected
                     ? "border-action bg-action text-action-foreground"

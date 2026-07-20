@@ -14,6 +14,7 @@ import {
   Sparkles,
 } from "lucide-react";
 
+import { CompletionConfetti } from "@/components/magicui/completion-confetti";
 import { Badge } from "@/components/ui/badge";
 import { BottomNavigation } from "@/components/ui/bottom-navigation";
 import { Button } from "@/components/ui/button";
@@ -62,9 +63,11 @@ function DemoSection({
 
 export function ColorSystemDemo() {
   const [activeNavigation, setActiveNavigation] = useState("today");
+  const [completionPreviewTrigger, setCompletionPreviewTrigger] = useState(0);
 
   return (
     <main className="min-h-svh bg-background text-foreground">
+        <CompletionConfetti trigger={completionPreviewTrigger} />
         <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6 sm:py-14">
           <div className="mb-10">
             <div>
@@ -112,6 +115,20 @@ export function ColorSystemDemo() {
               </div>
             </DemoSection>
 
+            <DemoSection
+              title="Completion feedback"
+              description="One restrained, non-blocking burst after a completion is safely stored."
+            >
+              <Button
+                onClick={() =>
+                  setCompletionPreviewTrigger((current) => current + 1)
+                }
+              >
+                <Check aria-hidden="true" />
+                Preview completion celebration
+              </Button>
+            </DemoSection>
+
             <DemoSection title="Task cards" description="Status appears as a restrained edge, tint, or badge.">
               <div className="grid gap-4 sm:grid-cols-2">
                 <Card tone="next">
@@ -157,7 +174,7 @@ export function ColorSystemDemo() {
                 </Card>
                 <Card className="items-center text-center">
                   <CardContent className="flex flex-col items-center">
-                    <span className="animate-flownee-gradient animate-flownee-glow flex size-16 items-center justify-center rounded-full bg-flownee-gradient p-1">
+                    <span className="animate-flownee-gradient animate-flownee-glow flex size-16 items-center justify-center rounded-full bg-flownee-gradient p-1 motion-reduce:animate-none">
                       <span className="flex size-full items-center justify-center rounded-full bg-action text-action-foreground">
                         <Mic aria-hidden="true" className="size-7" />
                       </span>
@@ -167,7 +184,7 @@ export function ColorSystemDemo() {
                 </Card>
                 <Card className="items-center text-center">
                   <CardContent className="flex flex-col items-center">
-                    <span className="animate-flownee-gradient flex size-16 items-center justify-center rounded-2xl bg-flownee-gradient p-0.5">
+                    <span className="animate-flownee-gradient flex size-16 items-center justify-center rounded-2xl bg-flownee-gradient p-0.5 motion-reduce:animate-none">
                       <span className="flex size-full items-center justify-center rounded-[0.65rem] bg-surface text-primary">
                         <Sparkles aria-hidden="true" className="size-7" />
                       </span>
@@ -234,7 +251,7 @@ export function ColorSystemDemo() {
             </DemoSection>
 
             <DemoSection title="Onboarding example" description="One of the few appropriate places for the complete brand gradient.">
-              <div className="animate-flownee-gradient overflow-hidden rounded-2xl bg-flownee-gradient p-5 sm:p-8">
+              <div className="animate-flownee-gradient overflow-hidden rounded-2xl bg-flownee-gradient p-5 motion-reduce:animate-none sm:p-8">
                 <div className="max-w-2xl rounded-xl bg-white/90 p-6 text-[#17213f] shadow-sm backdrop-blur-sm sm:p-8">
                   <Badge className="bg-[#eeeefe] text-[#373dc2]">Welcome to Flownee</Badge>
                   <h3 className="mt-4 text-3xl font-semibold tracking-[-0.04em]">

@@ -62,7 +62,7 @@ export function TaskActionsDialog({
               <span aria-hidden="true" className="shrink-0">
                 {displayIntentionEmoji(task.emoji)}
               </span>
-              <span className="truncate">{task.title}</span>
+              <span className="min-w-0 break-words">{task.title}</span>
             </h2>
           </div>
           <Button variant="ghost" size="icon" aria-label="Close task actions" onClick={onClose} disabled={busy}>

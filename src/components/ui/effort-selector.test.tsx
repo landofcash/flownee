@@ -15,5 +15,6 @@ describe("EffortSelector", () => {
     expect(markup).toContain("60′");
     expect(markup).toContain("120′+");
     expect(markup).not.toContain('type="number"');
+    expect(markup.match(/min-h-11/g)).toHaveLength(6);
   });
 });

@@ -7,6 +7,7 @@ import {
   ChevronRight,
   CircleDot,
   Clock3,
+  Info,
   ListTodo,
   LoaderCircle,
   MoreHorizontal,
@@ -16,19 +17,13 @@ import {
 } from "lucide-react";
 
 import { NetworkStatus } from "@/components/home/network-status";
+import { CompletionConfetti } from "@/components/magicui/completion-confetti";
+import { ShineBorder } from "@/components/magicui/shine-border";
 import { TaskActionsDialog } from "@/components/home/task-actions-dialog";
 import { AppHeader } from "@/components/layout/app-header";
 import { VoiceCapture } from "@/components/voice/voice-capture";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import {
   homeStateFromSnapshot,
   type HomeState,
@@ -44,6 +39,11 @@ import {
 import type { FlowneeSnapshot, Task } from "@/lib/storage/schema";
 import { effortLabel } from "@/lib/effort-options";
 import { displayIntentionEmoji } from "@/lib/intention-emoji";
+import {
+  CompletionCelebrationQueue,
+  persistWithCompletionFeedback,
+  shouldCelebrateTaskStatus,
+} from "@/lib/completion-feedback";
 
 type HomeShellProps = {
   state: HomeState;
@@ -141,7 +141,7 @@ function TaskRow({
       {onManage ? (
         <Button
           variant="ghost"
-          size="icon-sm"
+          size="icon-lg"
           aria-label={`Manage ${task.title}`}
           onClick={() => onManage(task.id)}
         >
@@ -154,66 +154,82 @@ function TaskRow({
   );
 }
 
-function EmptyRecommendation() {
+export function EmptyRecommendation() {
   return (
-    <Card tone="suggested" className="min-h-[25rem] justify-center shadow-[0_18px_50px_-28px_rgb(82_90_255_/_0.28)]">
-      <CardContent className="flex flex-col items-center px-6 py-8 text-center sm:px-12">
-        <span className="mb-6 flex size-16 items-center justify-center rounded-2xl bg-highlight/30 text-foreground">
-          <Sparkles aria-hidden="true" className="size-7" />
-        </span>
-        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-primary">
-          What should I do now?
-        </p>
-        <h1 className="mt-3 max-w-md text-balance text-3xl font-semibold tracking-[-0.04em] sm:text-4xl">
+    <section
+      aria-labelledby="empty-flow-title"
+      className="flex flex-col items-center py-9 text-center sm:py-12"
+      data-slot="empty-recommendation"
+    >
+      <span className="mb-5 flex size-14 items-center justify-center rounded-2xl bg-highlight/30 text-foreground">
+        <Sparkles aria-hidden="true" className="size-7" />
+      </span>
+      <p className="text-xs font-semibold uppercase tracking-[0.18em] text-primary">
+        What should I do now?
+      </p>
+        <h2
+        className="mt-3 max-w-md text-balance text-2xl font-semibold tracking-[-0.035em] sm:text-3xl"
+        id="empty-flow-title"
+      >
           Start with what’s on your mind.
-        </h1>
-        <p className="mt-4 max-w-md text-pretty leading-7 text-muted-foreground">
+        </h2>
+      <p className="mt-4 max-w-md text-pretty leading-7 text-muted-foreground">
           Tell Flownee about a task, idea, errand, or person you want to call.
           It will help you make sense of what comes next.
-        </p>
-      </CardContent>
-    </Card>
+      </p>
+    </section>
   );
 }
 
-function LoadingRecommendation() {
+export function LoadingRecommendation() {
   return (
-    <Card tone="suggested" className="min-h-[25rem] justify-center" aria-busy="true">
-      <CardContent className="flex flex-col items-center px-8 text-center">
-        <span className="relative mb-6 flex size-16 items-center justify-center rounded-2xl bg-scheduled text-scheduled-foreground">
-          <span className="absolute inset-0 animate-ping rounded-2xl bg-support/15 motion-reduce:animate-none" />
-          <CircleDot aria-hidden="true" className="relative size-7" />
-        </span>
-        <h1 className="text-2xl font-semibold tracking-[-0.03em]">
+    <section
+      aria-busy="true"
+      aria-labelledby="loading-flow-title"
+      className="flex flex-col items-center py-9 text-center sm:py-12"
+      data-slot="loading-recommendation"
+    >
+      <span className="relative mb-5 flex size-14 items-center justify-center rounded-2xl bg-scheduled text-scheduled-foreground">
+        <span className="absolute inset-0 animate-ping rounded-2xl bg-support/15 motion-reduce:animate-none" />
+        <CircleDot aria-hidden="true" className="relative size-7" />
+      </span>
+      <h2
+        className="text-2xl font-semibold tracking-[-0.03em]"
+        id="loading-flow-title"
+      >
           Finding your saved flow…
-        </h1>
-        <p className="mt-3 text-sm text-muted-foreground">
+      </h2>
+      <p className="mt-3 text-sm text-muted-foreground">
           This happens on your device—no AI request is needed.
-        </p>
-      </CardContent>
-    </Card>
+      </p>
+    </section>
   );
 }
 
-function CompleteRecommendation({ count }: { count: number }) {
+export function CompleteRecommendation({ count }: { count: number }) {
   return (
-    <Card tone="completed" className="min-h-[25rem] justify-center shadow-[0_18px_50px_-28px_rgb(74_181_181_/_0.35)]">
-      <CardContent className="flex flex-col items-center px-8 text-center">
-        <span className="mb-6 flex size-16 items-center justify-center rounded-full bg-completed text-completed-foreground">
-          <CheckCircle2 aria-hidden="true" className="size-8" />
-        </span>
-        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-completed-foreground">
-          All clear
-        </p>
-        <h1 className="mt-3 text-3xl font-semibold tracking-[-0.04em] sm:text-4xl">
+    <section
+      aria-labelledby="complete-flow-title"
+      className="flex flex-col items-center py-9 text-center sm:py-12"
+      data-slot="complete-recommendation"
+    >
+      <span className="mb-5 flex size-14 items-center justify-center rounded-full bg-completed text-completed-foreground">
+        <CheckCircle2 aria-hidden="true" className="size-8" />
+      </span>
+      <p className="text-xs font-semibold uppercase tracking-[0.18em] text-completed-foreground">
+        All clear
+      </p>
+      <h2
+        className="mt-3 text-2xl font-semibold tracking-[-0.035em] sm:text-3xl"
+        id="complete-flow-title"
+      >
           You’ve finished your flow.
-        </h1>
-        <p className="mt-4 max-w-md leading-7 text-muted-foreground">
+      </h2>
+      <p className="mt-4 max-w-md leading-7 text-muted-foreground">
           {count} {count === 1 ? "item is" : "items are"} complete. Enjoy the
           space—or add anything else that’s on your mind.
-        </p>
-      </CardContent>
-    </Card>
+      </p>
+    </section>
   );
 }
 
@@ -231,8 +247,12 @@ export function PlanRecommendation({
   onManage: (taskId: string) => void;
 }) {
   return (
-    <Card tone="next" className="min-h-[25rem] shadow-[0_18px_50px_-28px_rgb(82_90_255_/_0.3)]">
-      <CardHeader className="gap-3 border-b bg-important/55 pb-5">
+    <section
+      aria-labelledby="current-intention-title"
+      className="relative py-1"
+      data-slot="current-recommendation"
+    >
+      <div className="space-y-3">
         <div className="flex flex-wrap items-center gap-2">
           <Badge variant="important" className="gap-1.5">
             <Sparkles aria-hidden="true" />
@@ -245,18 +265,22 @@ export function PlanRecommendation({
             </Badge>
           )}
         </div>
-        <CardTitle className="flex items-start gap-3 text-balance text-3xl leading-tight tracking-[-0.04em] sm:text-4xl">
-          <span aria-hidden="true" className="shrink-0">
+        <h2
+          id="current-intention-title"
+          className="flex items-start gap-2.5 text-balance text-2xl font-semibold leading-[1.2] tracking-[-0.035em] sm:text-3xl"
+        >
+          <span aria-hidden="true" className="shrink-0 leading-none">
             {displayIntentionEmoji(state.nextTask.emoji)}
           </span>
           <span>{state.nextTask.title}</span>
-        </CardTitle>
-        <CardDescription>
+        </h2>
+        <div className="text-sm text-muted-foreground">
           <EffortBadge minutes={state.nextTask.estimatedEffortMinutes} />
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="flex flex-1 flex-col justify-between pt-6">
-        <div>
+        </div>
+      </div>
+
+      <div className="mt-6 border-t border-border/80 pt-5">
+        <div className="max-w-xl">
           <p className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">
             Why this makes sense
           </p>
@@ -264,13 +288,27 @@ export function PlanRecommendation({
             {state.reason}
           </p>
         </div>
-      </CardContent>
-      <CardFooter className="flex-wrap gap-2 border-t pt-5">
-        <Button disabled={actionsDisabled} onClick={() => onComplete(state.nextTask.id)}>
+      </div>
+
+      <div className="mt-5 flex flex-wrap items-center gap-2 border-t border-border/80 pt-5">
+        <Button
+          className="relative h-11 overflow-hidden"
+          disabled={actionsDisabled}
+          onClick={() => onComplete(state.nextTask.id)}
+        >
+          {!actionsDisabled && (
+            <ShineBorder
+              animation="repeat"
+              borderWidth={1.5}
+              duration={5}
+              shineColor={["#8FD9FB", "#4AB5B5", "#525AFF"]}
+            />
+          )}
           <Check aria-hidden="true" />
           Done
         </Button>
         <Button
+          className="h-11"
           disabled={actionsDisabled}
           onClick={() => onPostpone(state.nextTask.id)}
         >
@@ -280,35 +318,41 @@ export function PlanRecommendation({
         <Button
           disabled={actionsDisabled}
           variant="ghost"
-          size="icon"
+          size="icon-lg"
           className="ml-auto"
           aria-label="More task actions"
           onClick={() => onManage(state.nextTask.id)}
         >
           <MoreHorizontal aria-hidden="true" />
         </Button>
-      </CardFooter>
-    </Card>
+      </div>
+    </section>
   );
 }
 
-function UpcomingCard({ state, onManage }: { state: HomeState; onManage?: (taskId: string) => void }) {
+export function UpcomingCard({ state, onManage }: { state: HomeState; onManage?: (taskId: string) => void }) {
   const upcoming = state.status === "plan" ? state.upcomingTasks : [];
 
   return (
-    <Card tone="scheduled" className="h-fit gap-4 py-5 shadow-none lg:sticky lg:top-6">
-      <CardHeader className="px-5">
+    <section
+      aria-labelledby="upcoming-title"
+      className="border-t border-border/80 pt-5"
+      data-slot="upcoming-section"
+    >
+      <div>
         <div className="flex items-center gap-2">
           <ListTodo aria-hidden="true" className="size-4 text-support" />
-          <CardTitle className="text-base">Up next</CardTitle>
+          <h3 className="text-base font-semibold" id="upcoming-title">
+            Up next
+          </h3>
         </div>
-        <CardDescription>
+        <p className="mt-1.5 text-sm text-muted-foreground">
           {upcoming.length > 0
             ? `${upcoming.length} more ${upcoming.length === 1 ? "item" : "items"} in your current flow`
             : "Your next steps will settle here."}
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="px-5">
+        </p>
+      </div>
+      <div className="mt-4">
         {upcoming.length > 0 ? (
           <ol className="divide-y">
             {upcoming.map((task, index) => (
@@ -316,14 +360,12 @@ function UpcomingCard({ state, onManage }: { state: HomeState; onManage?: (taskI
             ))}
           </ol>
         ) : (
-          <div className="rounded-lg border border-dashed bg-muted/35 px-4 py-8 text-center">
-            <p className="text-sm text-muted-foreground">
-              Nothing is waiting for you.
-            </p>
-          </div>
+          <p className="py-3 text-sm text-muted-foreground">
+            Nothing is waiting for you.
+          </p>
         )}
-      </CardContent>
-    </Card>
+      </div>
+    </section>
   );
 }
 
@@ -346,13 +388,20 @@ export function SavedItemsCard({
   const completedCount = tasks.filter((task) => task.status === "completed").length;
   const postponedCount = tasks.filter((task) => task.status === "postponed").length;
   return (
-    <Card className="mt-5 gap-3 py-5 shadow-none">
-      <CardHeader className="px-5">
-        <CardTitle className="text-base">Saved items</CardTitle>
-        <CardDescription>Completed and postponed items stay on this device.</CardDescription>
-      </CardHeader>
-      <CardContent className="px-5">
-        <ul className="divide-y">
+    <section
+      aria-labelledby="saved-items-title"
+      className="mt-6 border-t border-border/80 pt-5"
+      data-slot="saved-items-section"
+    >
+      <div>
+        <h3 className="text-base font-semibold" id="saved-items-title">
+          Saved items
+        </h3>
+        <p className="mt-1.5 text-sm text-muted-foreground">
+          Completed and postponed items stay on this device.
+        </p>
+      </div>
+      <ul className="mt-4 divide-y">
           {tasks.map((task) => (
             <li key={task.id} className="flex items-center gap-3 py-3 first:pt-0 last:pb-0">
               <Badge variant="outline">{task.status === "completed" ? "Done" : "Later"}</Badge>
@@ -360,7 +409,7 @@ export function SavedItemsCard({
                 {displayIntentionEmoji(task.emoji)}
               </span>
               <span
-                className={`min-w-0 flex-1 truncate text-sm font-medium ${
+                className={`min-w-0 flex-1 break-words text-sm font-medium leading-5 ${
                   task.status === "completed"
                     ? "text-muted-foreground line-through decoration-2"
                     : ""
@@ -368,28 +417,29 @@ export function SavedItemsCard({
               >
                 {task.title}
               </span>
-              <Button variant="ghost" size="icon-sm" aria-label={`Manage ${task.title}`} onClick={() => onManage(task.id)}>
+              <Button variant="ghost" size="icon-lg" aria-label={`Manage ${task.title}`} onClick={() => onManage(task.id)}>
                 <MoreHorizontal aria-hidden="true" />
               </Button>
             </li>
           ))}
-        </ul>
-        <div className="mt-4 flex flex-wrap gap-2 border-t pt-4">
+      </ul>
+      <div className="mt-4 flex flex-wrap gap-2 border-t pt-4">
           <Button
+            className="h-11"
             disabled={busy || completedCount === 0}
             onClick={onRequestCleanDone}
           >
             Clean done
           </Button>
           <Button
+            className="h-11"
             disabled={busy || postponedCount === 0}
             onClick={onRestoreLater}
           >
             Restore for later
           </Button>
-        </div>
-      </CardContent>
-    </Card>
+      </div>
+    </section>
   );
 }
 
@@ -511,11 +561,16 @@ export function HomeShell({
   const [actionError, setActionError] = useState("");
   const [planningError, setPlanningError] = useState("");
   const [confirmCleanDone, setConfirmCleanDone] = useState(false);
+  const [completionCelebrationTrigger, setCompletionCelebrationTrigger] =
+    useState(0);
   const [isFlowUpdateBlocking, setIsFlowUpdateBlocking] = useState(
     !useLocalData && initialState.status === "plan" && initialState.isUpdating,
   );
   const replanAttemptRef = useRef(0);
   const replanAbortRef = useRef<AbortController | null>(null);
+  const [completionCelebrationQueue] = useState(
+    () => new CompletionCelebrationQueue(),
+  );
 
   const refreshLocalState = useCallback(async () => {
     if (!useLocalData) return;
@@ -541,9 +596,15 @@ export function HomeShell({
 
   useEffect(() => () => replanAbortRef.current?.abort(), []);
 
+  const releaseCompletionCelebration = useCallback(() => {
+    if (!completionCelebrationQueue.release()) return;
+    setCompletionCelebrationTrigger((current) => current + 1);
+  }, [completionCelebrationQueue]);
+
   const requestReplan = useCallback(async (nextSnapshot: FlowneeSnapshot) => {
     if (nextSnapshot.tasks.every((task) => task.status !== "active")) {
       setIsFlowUpdateBlocking(false);
+      releaseCompletionCelebration();
       return;
     }
     replanAbortRef.current?.abort();
@@ -597,13 +658,17 @@ export function HomeShell({
       repository?.close();
       if (attempt === replanAttemptRef.current) {
         setIsFlowUpdateBlocking(false);
+        releaseCompletionCelebration();
       }
     }
-  }, []);
+  }, [releaseCompletionCelebration]);
 
   async function mutateTask(
     mutation: TaskMutation,
-    { replan = true }: { replan?: boolean } = {},
+    {
+      replan = true,
+      celebrate = false,
+    }: { replan?: boolean; celebrate?: boolean } = {},
   ) {
     if (!useLocalData) return;
     if (replan) setIsFlowUpdateBlocking(true);
@@ -615,8 +680,13 @@ export function HomeShell({
     let repository: FlowneeRepository | null = null;
     try {
       repository = await FlowneeRepository.open();
-      await repository.applyTaskMutation(mutation);
-      const nextSnapshot = await repository.loadSnapshot();
+      const openedRepository = repository;
+      const nextSnapshot = await persistWithCompletionFeedback({
+        persist: () => openedRepository.applyTaskMutation(mutation),
+        load: () => openedRepository.loadSnapshot(),
+        celebrate,
+        onStoredCompletion: () => completionCelebrationQueue.queue(),
+      });
       setSnapshot(nextSnapshot);
       setState(homeStateFromSnapshot(nextSnapshot));
       setSelectedTask(null);
@@ -627,6 +697,7 @@ export function HomeShell({
           void requestReplan(nextSnapshot);
         } else {
           setIsFlowUpdateBlocking(false);
+          releaseCompletionCelebration();
         }
       }
     } catch (error) {
@@ -645,7 +716,13 @@ export function HomeShell({
   function updateStatus(taskId: string, status: Task["status"]) {
     const task = taskById(taskId);
     if (!task) return;
-    void mutateTask({ kind: "upsert", task: { ...task, status, updatedAt: new Date().toISOString() } });
+    void mutateTask(
+      {
+        kind: "upsert",
+        task: { ...task, status, updatedAt: new Date().toISOString() },
+      },
+      { celebrate: shouldCelebrateTaskStatus(status) },
+    );
   }
 
   function openTask(taskId: string) {
@@ -682,12 +759,12 @@ export function HomeShell({
       <NetworkStatus />
       <AppHeader />
 
-      <main className="mx-auto px-4 pb-40 pt-7 sm:px-6 sm:pt-10">
+      <main className="mx-auto px-4 pb-[calc(10rem+env(safe-area-inset-bottom))] pt-7 sm:px-6 sm:pt-10">
         <div className="mb-7 sm:mb-9">
           <p className="text-sm font-medium text-primary">Your flow</p>
-          <h2 className="mt-1 text-2xl font-semibold tracking-[-0.035em] sm:text-3xl">
+          <h1 className="mt-1 text-2xl font-semibold tracking-[-0.035em] sm:text-3xl">
             What makes sense next
-          </h2>
+          </h1>
         </div>
 
         <div className="grid items-start gap-5">
@@ -744,8 +821,8 @@ export function HomeShell({
           />
         )}
 
-        <div className="mt-6 flex items-start gap-2 text-xs leading-5 text-muted-foreground">
-          <CircleDot aria-hidden="true" className="mt-0.5 size-3.5 shrink-0" />
+        <div className="mt-6 flex items-start gap-2 border-t border-border/80 pt-4 text-xs leading-5 text-muted-foreground">
+          <Info aria-hidden="true" className="mt-0.5 size-3.5 shrink-0" />
           <p>
             Tasks and plans stay in this browser. Voice will only be sent for
             processing after you choose to record.
@@ -796,6 +873,7 @@ export function HomeShell({
       }
     />
     <FlowUpdateOverlay visible={isFlowUpdateBlocking} />
+    <CompletionConfetti trigger={completionCelebrationTrigger} />
     </>
   );
 }

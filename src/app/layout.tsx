@@ -1,10 +1,17 @@
 import type { Metadata } from "next";
+import { Plus_Jakarta_Sans } from "next/font/google";
 import type { ReactNode } from "react";
 
 import { PwaRegister } from "@/components/pwa-register";
 import { FLOWNEE_THEME_STORAGE_KEY } from "@/lib/theme";
 
 import "./globals.css";
+
+const plusJakartaSans = Plus_Jakarta_Sans({
+  display: "swap",
+  subsets: ["latin"],
+  variable: "--font-plus-jakarta-sans",
+});
 
 export const metadata: Metadata = {
   applicationName: "Flownee",
@@ -57,7 +64,7 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeInitializationScript }} />
       </head>
-      <body>
+      <body className={plusJakartaSans.variable}>
         {children}
         <PwaRegister />
       </body>

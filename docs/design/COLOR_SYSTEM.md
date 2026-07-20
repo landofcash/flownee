@@ -53,3 +53,19 @@ Use the gradient only for logo or hero treatments, active voice recording, AI pr
 - Motion effects stop when `prefers-reduced-motion: reduce` is active.
 
 The internal, no-index reference page is available at `/design-system`.
+
+## Magic UI effects
+
+Gate 2 stages only the MIT-licensed Magic UI Shine Border and Confetti source components. They are repository-owned adaptations rather than a new design system.
+
+- Shine Border is used only inside the enabled primary current-task `Done` action and the circular microphone control within the fixed voice action. Each 1.5px violet/teal/light-blue border follows a five-second cycle: it makes one soft pass during approximately the first 2.5 seconds, fades fully, remains invisible for approximately 2.5 seconds, and repeats. The solid control fill is preserved, the overlay ignores pointer input, and reduced-motion users receive no animation. The disabled `Done` action has no shine overlay.
+- Confetti is reserved for one 36-particle burst after a task completion is successfully stored and the blocking flow update closes. It uses the four Flownee brand colors, stays inside the 430px application shell, ignores pointer input, and is hidden for reduced-motion users. It fires for `Done` and dialog `Complete` only—not postpone, restore, edit, delete, clean-up, voice capture, failed storage, replanning, rerendering, or refresh. The internal `/design-system` preview is isolated from tasks, persistence, replanning, and APIs.
+- No other Magic UI effects, animation framework, gradients inside ordinary controls, particles, animated headings, or decorative section borders are approved.
+
+### Gate 2 audit
+
+Gate 2 is complete locally on `design-v2`. Automated coverage proves the storage-success boundary, one-time queue release, disabled-action behavior, non-interactive overlays, and reduced-motion gates. Responsive browser checks cover 320px, 360px, 390px, 430px, and a centered desktop viewport in light and dark modes. The available browser surface did not expose reduced-motion media emulation, so that safeguard is supported by executable unit tests, the `disableForReducedMotion` runtime option, and CSS inspection rather than represented as a simulated visual pass.
+
+The completion canvas remains below the blocking update overlay (`70` versus `80`), exactly one canvas renders per page, and the stable worker configuration creates no application JavaScript timer or event-listener loop. The approved repeating shine is CSS-only. Optimized output contains one confetti-bearing chunk for the home route and one for the independently loaded internal design-system route; neither route duplicates the implementation within a single page load.
+
+Upstream sources: [Shine Border](https://magicui.design/docs/components/shine-border), [Confetti](https://magicui.design/docs/components/confetti), and the [Magic UI MIT license](https://github.com/magicuidesign/magicui/blob/main/LICENSE.md). The pinned `canvas-confetti` runtime dependency is ISC licensed; its copyright and permission notice remain in the installed package and lockfile-managed dependency.
