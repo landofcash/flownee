@@ -43,6 +43,7 @@ import {
 } from "@/lib/storage/database";
 import type { FlowneeSnapshot, Task } from "@/lib/storage/schema";
 import { effortLabel } from "@/lib/effort-options";
+import { displayIntentionEmoji } from "@/lib/intention-emoji";
 
 type HomeShellProps = {
   state: HomeState;
@@ -125,8 +126,11 @@ function TaskRow({
         {index + 1}
       </span>
       <div className="min-w-0 flex-1">
-        <p className="text-sm font-medium leading-5 text-foreground">
-          {task.title}
+        <p className="flex items-start gap-2 text-sm font-medium leading-5 text-foreground">
+          <span aria-hidden="true" className="shrink-0 text-base leading-5">
+            {displayIntentionEmoji(task.emoji)}
+          </span>
+          <span>{task.title}</span>
         </p>
         <p className="mt-0.5 text-xs text-muted-foreground">
           {task.estimatedEffortMinutes === null
@@ -241,8 +245,11 @@ export function PlanRecommendation({
             </Badge>
           )}
         </div>
-        <CardTitle className="text-balance text-3xl leading-tight tracking-[-0.04em] sm:text-4xl">
-          {state.nextTask.title}
+        <CardTitle className="flex items-start gap-3 text-balance text-3xl leading-tight tracking-[-0.04em] sm:text-4xl">
+          <span aria-hidden="true" className="shrink-0">
+            {displayIntentionEmoji(state.nextTask.emoji)}
+          </span>
+          <span>{state.nextTask.title}</span>
         </CardTitle>
         <CardDescription>
           <EffortBadge minutes={state.nextTask.estimatedEffortMinutes} />
@@ -349,6 +356,9 @@ export function SavedItemsCard({
           {tasks.map((task) => (
             <li key={task.id} className="flex items-center gap-3 py-3 first:pt-0 last:pb-0">
               <Badge variant="outline">{task.status === "completed" ? "Done" : "Later"}</Badge>
+              <span aria-hidden="true" className="shrink-0 text-base">
+                {displayIntentionEmoji(task.emoji)}
+              </span>
               <span
                 className={`min-w-0 flex-1 truncate text-sm font-medium ${
                   task.status === "completed"

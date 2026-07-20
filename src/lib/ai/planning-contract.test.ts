@@ -45,6 +45,7 @@ const output = (): PlanningOutput => ({
     {
       taskRef: "new:1",
       title: "Pay the bill",
+      emoji: "💳",
       notes: null,
       statedDeadline: { value: null, source: "none" },
       effort: { minutes: 5, source: "ai-estimate", rationale: "A quick online payment." },
@@ -55,6 +56,7 @@ const output = (): PlanningOutput => ({
     {
       taskRef: "new:2",
       title: "Call Maria",
+      emoji: "📞",
       notes: null,
       statedDeadline: { value: null, source: "none" },
       effort: { minutes: 10, source: "ai-estimate", rationale: "A short personal call." },
@@ -126,6 +128,18 @@ describe("Flownee GPT-5.6 planning contract", () => {
     );
   });
 
+  it.each(["call", "📞 🛒", "📞call"])(
+    "rejects an invalid intention emoji: %s",
+    (emoji) => {
+      const candidate = structuredClone(output());
+      candidate.newTasks[0].emoji = emoji;
+
+      expect(() => parsePlanningOutput(candidate, request)).toThrow(
+        "emoji must contain exactly one emoji",
+      );
+    },
+  );
+
   it.each([
     ["unknown plan reference", (candidate: PlanningOutput) => candidate.plan.orderedTaskRefs.splice(1, 1, "task:unknown")],
     ["duplicate plan reference", (candidate: PlanningOutput) => candidate.plan.orderedTaskRefs.splice(2, 1, "new:1")],
@@ -145,7 +159,7 @@ describe("Flownee GPT-5.6 planning contract", () => {
       taskRevision: 0,
     };
     const emptyOutput: PlanningOutput = {
-      schemaVersion: 1,
+      schemaVersion: FLOWNEE_PLANNING_SCHEMA_VERSION,
       newTasks: [],
       clarifications: [],
       plan: {
@@ -166,7 +180,7 @@ describe("Flownee GPT-5.6 planning contract", () => {
       transcript: null,
     };
     const replanOutput: PlanningOutput = {
-      schemaVersion: 1,
+      schemaVersion: FLOWNEE_PLANNING_SCHEMA_VERSION,
       newTasks: [],
       clarifications: [],
       plan: {
@@ -254,6 +268,19 @@ describe("planning evaluation fixtures", () => {
     };
     expect(evaluatePlanningFixture(fixture!, badOutput)).toContain(
       "A deadline was invented for a transcript without one.",
+    );
+  });
+
+  it("reports a missing or invalid intention emoji in evaluation output", () => {
+    const fixture = PLANNING_EVALUATION_FIXTURES.find(
+      (item) => item.id === "passing-thought-to-action",
+    );
+    expect(fixture).toBeDefined();
+    const badOutput = output();
+    badOutput.newTasks[0].emoji = "phone";
+
+    expect(evaluatePlanningFixture(fixture!, badOutput)).toContain(
+      "Every extracted intention must include exactly one fitting emoji.",
     );
   });
 });

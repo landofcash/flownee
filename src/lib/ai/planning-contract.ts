@@ -1,7 +1,8 @@
 import type { EffortSource, TaskAssumption } from "@/lib/storage/schema";
 import { isEffortOption, type EffortMinutes } from "@/lib/effort-options";
+import { isSingleIntentionEmoji } from "@/lib/intention-emoji";
 
-export const FLOWNEE_PLANNING_SCHEMA_VERSION = 1 as const;
+export const FLOWNEE_PLANNING_SCHEMA_VERSION = 2 as const;
 export const FLOWNEE_PLANNING_MODEL = "gpt-5.6-sol" as const;
 export const FLOWNEE_PLANNING_REASONING_EFFORT = "medium" as const;
 
@@ -39,6 +40,7 @@ export type AttributeSource = "user-stated" | "ai-inferred";
 export type NewTaskOutput = {
   taskRef: NewTaskRef;
   title: string;
+  emoji: string;
   notes: string | null;
   statedDeadline: {
     value: string | null;
@@ -162,6 +164,12 @@ const newTaskSchema = strictObject({
     description: "Temporary unique reference beginning with new:, such as new:1.",
   },
   title: { type: "string", description: "Concise actionable title." },
+  emoji: {
+    type: "string",
+    minLength: 1,
+    maxLength: 16,
+    description: "Exactly one fitting emoji grapheme for this intention.",
+  },
   notes: nullableString(),
   statedDeadline: strictObject({
     value: nullableString(),
@@ -213,7 +221,7 @@ export const FLOWNEE_PLANNING_OUTPUT_SCHEMA = strictObject({
 
 export const FLOWNEE_PLANNING_TEXT_FORMAT = {
   type: "json_schema",
-  name: "flownee_execution_plan_v1",
+  name: "flownee_execution_plan_v2",
   description:
     "Extracts spoken intentions and produces a complete, explainable active-task plan.",
   strict: true,
@@ -395,6 +403,7 @@ function parseNewTask(value: unknown, index: number): NewTaskOutput {
     [
       "taskRef",
       "title",
+      "emoji",
       "notes",
       "statedDeadline",
       "effort",
@@ -406,6 +415,9 @@ function parseNewTask(value: unknown, index: number): NewTaskOutput {
   );
   const taskRef = nonEmptyString(task.taskRef, `${label} taskRef`);
   if (!taskRef.startsWith("new:")) fail(`${label} taskRef must begin with new:.`);
+  if (!isSingleIntentionEmoji(task.emoji)) {
+    fail(`${label} emoji must contain exactly one emoji.`);
+  }
   const deadline = record(task.statedDeadline, `${label} statedDeadline`);
   exactKeys(deadline, ["value", "source"], `${label} statedDeadline`);
   const deadlineValue =
@@ -480,6 +492,7 @@ function parseNewTask(value: unknown, index: number): NewTaskOutput {
   return {
     taskRef: taskRef as NewTaskRef,
     title: nonEmptyString(task.title, `${label} title`),
+    emoji: task.emoji.trim(),
     notes: task.notes === null ? null : nullableText(task.notes, `${label} notes`),
     statedDeadline: {
       value: deadlineValue,

@@ -4,6 +4,25 @@ Use this file to preserve evidence of Codex contributions and human judgment. Do
 
 The `/feedback` Session ID required by the hackathon must come from the project task where most core functionality is built. A baseline or documentation session should not be presented as that session unless it genuinely contains the majority of core functionality.
 
+## 2026-07-20 — AI-selected intention emoji
+
+- Session ID: `TBD` (supporting AI interpretation and visual scanning)
+- Objective: Have GPT-5.6 return one fitting emoji for each extracted intention and display it beside that intention throughout Flownee.
+- Codex contributions:
+  - Upgraded the strict planning contract to version 2 with one required emoji per new intention and concise model guidance.
+  - Added grapheme-aware runtime validation that accepts one emoji, including joined and skin-tone sequences, while rejecting words, mixed content, and multiple icons.
+  - Persisted validated emojis with new task records while keeping existing version-1 IndexedDB records readable through a neutral display fallback.
+  - Integrated the visual cue into interpretation review, current and upcoming flow, saved items, and task management without adding manual emoji entry.
+  - Extended contract, commit, evaluation, compatibility, and component coverage.
+- Human product and interaction decisions preserved:
+  - Victoria requested that AI choose an emoji fitting each intention and that the icon appear next to the intention.
+  - Emoji selection remains automated; the existing editable title and effort controls are unchanged.
+- Verification:
+  - 30 test files and 106 tests pass; ESLint passes with zero warnings; the optimized Next.js production build passes.
+  - Local browser checks confirm sample icons and legacy fallbacks in light and dark themes, the `430px` centered shell, no horizontal overflow, and no task mutation.
+  - No live OpenAI request was made; the provider boundary is covered with strict schemas, fixtures, and mocked tests.
+  - Commit and production deployment intentionally await separate product-owner approval.
+
 ## 2026-07-19 — Clean done confirmation modal
 
 - Session ID: `TBD` (supporting destructive-action clarity)

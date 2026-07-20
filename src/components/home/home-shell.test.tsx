@@ -49,6 +49,21 @@ describe("home recommendation actions", () => {
     expect(laterButton).toContain('data-variant="default"');
     expect(laterButton).toContain("lucide-clock-3");
   });
+
+  it("shows the intention emoji beside the next-action title", () => {
+    const markup = renderToStaticMarkup(
+      <PlanRecommendation
+        state={sampleHomeState}
+        actionsDisabled={false}
+        onComplete={vi.fn()}
+        onPostpone={vi.fn()}
+        onManage={vi.fn()}
+      />,
+    );
+
+    expect(markup).toContain("🧺");
+    expect(markup).toContain("Start the dark-clothes wash");
+  });
 });
 
 describe("flow update overlay", () => {
@@ -92,6 +107,21 @@ describe("saved items", () => {
     expect(postponedTitle?.[1]).not.toContain("line-through");
     expect(markup).toMatch(/data-variant="default"[^>]*>Clean done<\/button>/);
     expect(markup).toMatch(/data-variant="default"[^>]*>Restore for later<\/button>/);
+  });
+
+  it("uses the neutral emoji fallback for legacy saved intentions", () => {
+    const markup = renderToStaticMarkup(
+      <SavedItemsCard
+        tasks={[savedTask("legacy", "Legacy intention", "completed")]}
+        busy={false}
+        onManage={vi.fn()}
+        onRequestCleanDone={vi.fn()}
+        onRestoreLater={vi.fn()}
+      />,
+    );
+
+    expect(markup).toContain("✨");
+    expect(markup).toContain("Legacy intention");
   });
 
   it("shows an explicit confirmation before cleaning completed items", () => {

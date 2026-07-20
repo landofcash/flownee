@@ -35,6 +35,7 @@ Deliver one polished, judge-testable journey that demonstrates Flownee's ability
 - GPT-4o Transcribe integration.
 - Editable transcript before task interpretation.
 - One or multiple tasks extracted from one recording.
+- One AI-selected emoji cue for each extracted intention.
 - Review of extracted titles and critical details before saving.
 - Clear treatment of estimates and assumptions.
 

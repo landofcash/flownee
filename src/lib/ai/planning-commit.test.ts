@@ -31,6 +31,7 @@ describe("reviewed planning commit", () => {
     expect(commit.tasks[0]).toMatchObject({
       id: "generated-1",
       title: "Call Maria tonight",
+      emoji: "📞",
       estimatedEffortMinutes: 15,
       effortSource: "user-edited",
       sourceTranscriptId: "transcript-1",

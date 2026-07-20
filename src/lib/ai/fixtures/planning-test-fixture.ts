@@ -22,6 +22,7 @@ export const planningOutputFixture: PlanningOutput = {
     {
       taskRef: "new:1",
       title: "Call Maria",
+      emoji: "📞",
       notes: null,
       statedDeadline: { value: null, source: "none" },
       effort: {

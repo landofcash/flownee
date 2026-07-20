@@ -5,6 +5,7 @@ import type {
 } from "@/lib/ai/planning-contract";
 import type { ExecutionPlan, Task } from "@/lib/storage/schema";
 import { isEffortOption } from "@/lib/effort-options";
+import { isSingleIntentionEmoji } from "@/lib/intention-emoji";
 
 export type InterpretationDraft = {
   taskRef: string;
@@ -84,6 +85,9 @@ export function buildPlanningCommit({
     const title = draft.title.trim();
     const notes = draft.notes.trim();
     if (!title) throw new TypeError("Every interpreted task needs a title.");
+    if (!isSingleIntentionEmoji(task.emoji)) {
+      throw new TypeError("Every interpreted task needs exactly one emoji.");
+    }
     if (!isEffortOption(draft.effortMinutes)) {
       throw new TypeError(
         "Every effort estimate must use a supported time option.",
@@ -112,6 +116,7 @@ export function buildPlanningCommit({
     return {
       id: refToId.get(task.taskRef)!,
       title,
+      emoji: task.emoji,
       notes: notes || null,
       sourceTranscriptId: request.transcript!.id,
       status: "active" as const,

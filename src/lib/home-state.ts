@@ -4,6 +4,7 @@ import { LOCAL_PROVISIONAL_PLAN_MODEL } from "@/lib/storage/database";
 export type PlannedTask = {
   id: string;
   title: string;
+  emoji?: string;
   estimatedEffortMinutes: number | null;
 };
 
@@ -42,6 +43,7 @@ export const sampleHomeState: PlanHomeState = {
   nextTask: {
     id: "sample-laundry",
     title: "Start the dark-clothes wash",
+    emoji: "🧺",
     estimatedEffortMinutes: 10,
   },
   reason:
@@ -50,16 +52,19 @@ export const sampleHomeState: PlanHomeState = {
     {
       id: "sample-bill",
       title: "Pay the electricity bill",
+      emoji: "💡",
       estimatedEffortMinutes: 5,
     },
     {
       id: "sample-gift",
       title: "Check the gift deadline and buy the present",
+      emoji: "🎁",
       estimatedEffortMinutes: 30,
     },
     {
       id: "sample-call",
       title: "Call Maria",
+      emoji: "📞",
       estimatedEffortMinutes: 10,
     },
   ],
@@ -80,6 +85,7 @@ function toPlannedTask(task: Task): PlannedTask {
   return {
     id: task.id,
     title: task.title,
+    emoji: task.emoji,
     estimatedEffortMinutes: task.estimatedEffortMinutes,
   };
 }

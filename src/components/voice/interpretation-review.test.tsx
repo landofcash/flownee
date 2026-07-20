@@ -24,6 +24,7 @@ describe("InterpretationReview", () => {
     const markup = renderReview();
 
     expect(markup).toContain("Intention 1");
+    expect(markup).toContain("📞");
     expect(markup).toContain('aria-label="Intention 1 action"');
     expect(markup).toContain("Choose time effort");
     expect(markup).toContain("Add to my flow");

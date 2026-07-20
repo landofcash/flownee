@@ -1,3 +1,5 @@
+import { isSingleIntentionEmoji } from "@/lib/intention-emoji";
+
 export const FLOWNEE_SCHEMA_VERSION = 1 as const;
 
 export type TranscriptStatus = "draft" | "confirmed" | "failed";
@@ -22,6 +24,7 @@ export type TaskAssumption = {
 export type Task = {
   id: string;
   title: string;
+  emoji?: string;
   notes: string | null;
   sourceTranscriptId: string;
   status: TaskStatus;
@@ -122,6 +125,10 @@ export function assertTask(value: unknown): asserts value is Task {
   requireCondition(isRecord(value), "Task must be an object.");
   requireCondition(isNonEmptyString(value.id), "Task id is required.");
   requireCondition(isNonEmptyString(value.title), "Task title is required.");
+  requireCondition(
+    value.emoji === undefined || isSingleIntentionEmoji(value.emoji),
+    "Task emoji must contain exactly one emoji when present.",
+  );
   requireCondition(
     value.notes === null || typeof value.notes === "string",
     "Task notes must be text or null.",

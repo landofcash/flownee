@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import type { InterpretationDraft } from "@/lib/ai/planning-commit";
 import type { PlanningOutput } from "@/lib/ai/planning-contract";
 import { isEffortOption } from "@/lib/effort-options";
+import { displayIntentionEmoji } from "@/lib/intention-emoji";
 
 type InterpretationReviewProps = {
   drafts: InterpretationDraft[];
@@ -69,16 +70,21 @@ export function InterpretationReview({
               <legend className="px-1 text-xs font-semibold uppercase tracking-[0.14em] text-primary">
                 Intention {index + 1}
               </legend>
-              <Input
-                aria-label={`Intention ${index + 1} action`}
-                value={draft.title}
-                onChange={(event) =>
-                  updateDraft(index, { ...draft, title: event.target.value })
-                }
-                disabled={isSaving}
-                maxLength={180}
-                className="text-base"
-              />
+              <div className="flex items-center gap-2">
+                <span aria-hidden="true" className="shrink-0 text-2xl">
+                  {displayIntentionEmoji(source.emoji)}
+                </span>
+                <Input
+                  aria-label={`Intention ${index + 1} action`}
+                  value={draft.title}
+                  onChange={(event) =>
+                    updateDraft(index, { ...draft, title: event.target.value })
+                  }
+                  disabled={isSaving}
+                  maxLength={180}
+                  className="min-w-0 text-base"
+                />
+              </div>
               <div className="mt-4">
                 <EffortSelector
                   name={`effort-${draft.taskRef}`}

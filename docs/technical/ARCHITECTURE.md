@@ -81,6 +81,7 @@ revision used to reject stale plans.
 |---|---|
 | `id` | Client-generated stable identifier |
 | `title` | Concise, user-editable action |
+| `emoji` | One AI-selected visual cue; legacy records use a neutral display fallback |
 | `notes` | Optional user-stated details |
 | `sourceTranscriptId` | Traceability to confirmed capture |
 | `status` | `active`, `completed`, or `postponed` |
@@ -139,7 +140,7 @@ validation, and executable evaluation fixtures.
   tasks; `replan` contains no transcript and is forbidden from creating tasks or
   clarifications. Both include the task revision, compact active-task snapshot,
   capture time, and IANA time zone. Completed history and unrelated local data are excluded.
-- Output: extracted tasks, explicit attribute provenance, editable effort
+- Output: extracted tasks with one validated fitting emoji, explicit attribute provenance, editable effort
   estimates, assumptions, essential clarifications, a complete order, one
   explained next action, and genuine parallel groups.
 - Deadline policy: a value is permitted only with `user-stated` provenance;

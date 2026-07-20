@@ -3,6 +3,7 @@ import {
   type PlanningOutput,
   type PlanningRequest,
 } from "@/lib/ai/planning-contract";
+import { isSingleIntentionEmoji } from "@/lib/intention-emoji";
 
 export type PlanningEvaluationExpectation = {
   minNewTasks: number;
@@ -203,6 +204,10 @@ export function evaluatePlanningFixture(
 ): string[] {
   const issues: string[] = [];
   const titles = output.newTasks.map((task) => task.title.toLocaleLowerCase());
+
+  if (output.newTasks.some((task) => !isSingleIntentionEmoji(task.emoji))) {
+    issues.push("Every extracted intention must include exactly one fitting emoji.");
+  }
 
   if (output.newTasks.length < fixture.expectation.minNewTasks) {
     issues.push(`Expected at least ${fixture.expectation.minNewTasks} new tasks.`);

@@ -8,6 +8,7 @@ import { EffortSelector } from "@/components/ui/effort-selector";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { effortLabel, isEffortOption, type EffortMinutes } from "@/lib/effort-options";
+import { displayIntentionEmoji } from "@/lib/intention-emoji";
 import type { Task } from "@/lib/storage/schema";
 
 type TaskActionsDialogProps = {
@@ -57,8 +58,11 @@ export function TaskActionsDialog({
             <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary">
               Manage item
             </p>
-            <h2 id="task-actions-title" className="mt-1 truncate text-2xl font-semibold tracking-[-0.03em]">
-              {task.title}
+            <h2 id="task-actions-title" className="mt-1 flex min-w-0 items-center gap-2 text-2xl font-semibold tracking-[-0.03em]">
+              <span aria-hidden="true" className="shrink-0">
+                {displayIntentionEmoji(task.emoji)}
+              </span>
+              <span className="truncate">{task.title}</span>
             </h2>
           </div>
           <Button variant="ghost" size="icon" aria-label="Close task actions" onClick={onClose} disabled={busy}>
