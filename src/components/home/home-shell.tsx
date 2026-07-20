@@ -132,10 +132,14 @@ function TaskRow({
           </span>
           <span>{task.title}</span>
         </p>
-        <p className="mt-0.5 text-xs text-muted-foreground">
-          {task.estimatedEffortMinutes === null
-            ? "Estimate pending"
-            : `Estimated ${effortLabel(task.estimatedEffortMinutes)}`}
+        <p className="mt-0.5 flex items-center gap-1 text-xs text-muted-foreground">
+          <Clock3 aria-hidden="true" className="size-3.5 shrink-0" />
+          <span className="sr-only">Estimated effort: </span>
+          <span>
+            {task.estimatedEffortMinutes === null
+              ? "Estimate pending"
+              : effortLabel(task.estimatedEffortMinutes)}
+          </span>
         </p>
       </div>
       {onManage ? (
@@ -253,11 +257,15 @@ export function PlanRecommendation({
       data-slot="current-recommendation"
     >
       <div className="space-y-3">
-        <div className="flex flex-wrap items-center gap-2">
+        <div
+          className="flex flex-wrap items-center gap-2"
+          data-slot="current-recommendation-meta"
+        >
           <Badge variant="important" className="gap-1.5">
             <Sparkles aria-hidden="true" />
             Do this now
           </Badge>
+          <EffortBadge minutes={state.nextTask.estimatedEffortMinutes} />
           {state.isUpdating && (
             <Badge variant="completed" className="gap-1.5">
               <span className="size-1.5 animate-pulse rounded-full bg-flow motion-reduce:animate-none" />
@@ -274,9 +282,6 @@ export function PlanRecommendation({
           </span>
           <span>{state.nextTask.title}</span>
         </h2>
-        <div className="text-sm text-muted-foreground">
-          <EffortBadge minutes={state.nextTask.estimatedEffortMinutes} />
-        </div>
       </div>
 
       <div className="mt-6 border-t border-border/80 pt-5">
@@ -343,14 +348,9 @@ export function UpcomingCard({ state, onManage }: { state: HomeState; onManage?:
         <div className="flex items-center gap-2">
           <ListTodo aria-hidden="true" className="size-4 text-support" />
           <h3 className="text-base font-semibold" id="upcoming-title">
-            Up next
+            Next items in your current flow
           </h3>
         </div>
-        <p className="mt-1.5 text-sm text-muted-foreground">
-          {upcoming.length > 0
-            ? `${upcoming.length} more ${upcoming.length === 1 ? "item" : "items"} in your current flow`
-            : "Your next steps will settle here."}
-        </p>
       </div>
       <div className="mt-4">
         {upcoming.length > 0 ? (
@@ -387,6 +387,10 @@ export function SavedItemsCard({
   if (tasks.length === 0) return null;
   const completedCount = tasks.filter((task) => task.status === "completed").length;
   const postponedCount = tasks.filter((task) => task.status === "postponed").length;
+  const sortedTasks = [
+    ...tasks.filter((task) => task.status === "postponed"),
+    ...tasks.filter((task) => task.status === "completed"),
+  ];
   return (
     <section
       aria-labelledby="saved-items-title"
@@ -395,14 +399,11 @@ export function SavedItemsCard({
     >
       <div>
         <h3 className="text-base font-semibold" id="saved-items-title">
-          Saved items
+          Postponed and completed items
         </h3>
-        <p className="mt-1.5 text-sm text-muted-foreground">
-          Completed and postponed items stay on this device.
-        </p>
       </div>
       <ul className="mt-4 divide-y">
-          {tasks.map((task) => (
+          {sortedTasks.map((task) => (
             <li key={task.id} className="flex items-center gap-3 py-3 first:pt-0 last:pb-0">
               <Badge variant="outline">{task.status === "completed" ? "Done" : "Later"}</Badge>
               <span aria-hidden="true" className="shrink-0 text-base">
@@ -495,7 +496,7 @@ export function CleanDoneDialog({
         <div className="flex items-start justify-between gap-4">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary">
-              Saved items
+              Postponed and completed items
             </p>
             <h2
               className="mt-1 text-2xl font-semibold tracking-[-0.03em]"

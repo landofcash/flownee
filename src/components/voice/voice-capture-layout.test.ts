@@ -1,12 +1,13 @@
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
 import {
   FLOWNEE_BASE_IMAGE,
   FLOWNEE_INTENTION_IMAGES,
   FLOWNEE_INTENTION_INTERVAL_MS,
   VoiceCapture,
+  finishSuccessfulCapture,
   nextFlowneeIntentionIndex,
   shouldShowFlowneeImageMock,
   type CaptureState,
@@ -32,7 +33,6 @@ describe("voice capture layout", () => {
       "planning",
       "interpretation",
       "committing",
-      "saved",
       "error",
       "planning-error",
       "unavailable",
@@ -44,6 +44,27 @@ describe("voice capture layout", () => {
     hiddenStates.forEach((state) => {
       expect(shouldShowFlowneeImageMock(state)).toBe(false);
     });
+  });
+
+  it("closes only after the refreshed flow is ready", async () => {
+    let resolveFlowChanged: (() => void) | undefined;
+    const onFlowChanged = vi.fn(
+      () =>
+        new Promise<void>((resolve) => {
+          resolveFlowChanged = resolve;
+        }),
+    );
+    const closeCapture = vi.fn();
+
+    const completion = finishSuccessfulCapture(onFlowChanged, closeCapture);
+
+    expect(onFlowChanged).toHaveBeenCalledOnce();
+    expect(closeCapture).not.toHaveBeenCalled();
+
+    resolveFlowChanged?.();
+    await completion;
+
+    expect(closeCapture).toHaveBeenCalledOnce();
   });
 
   it("cycles through all four intention layers in order", () => {

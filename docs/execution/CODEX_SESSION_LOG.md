@@ -4,6 +4,100 @@ Use this file to preserve evidence of Codex contributions and human judgment. Do
 
 The `/feedback` Session ID required by the hackathon must come from the project task where most core functionality is built. A baseline or documentation session should not be presented as that session unless it genuinely contains the majority of core functionality.
 
+## 2026-07-20 — automatic post-addition handoff
+
+- Session ID: `TBD` (supporting lower-friction voice capture)
+- Objective: Omit the `Flow updated` success screen after adding intentions and return automatically to the refreshed home flow.
+- Codex contributions:
+  - Removed the `saved` capture state, its message state, icon, title, explanatory copy, and extra `Done` action.
+  - Added an explicit async handoff that waits for `onFlowChanged` before closing and resetting the capture session.
+  - Added regression coverage proving the dialog cannot close before the refreshed flow callback resolves.
+- Human product and design decisions preserved:
+  - Victoria selected automatic return to the updated flow after a successful addition.
+  - Interpretation review, the committing lock, IndexedDB-first persistence, error recovery, task-action update overlay, recording, and AI behavior remain unchanged.
+- Verification:
+  - The ordering test proves the close callback remains untouched until `onFlowChanged` resolves, then runs exactly once.
+  - Both successful branches—reviewed intentions and no-new-item capture—use the same handoff; source audit finds zero `saved` state, `Flow updated`, saved-message, or success-icon references.
+  - 34 test files and 124 tests pass; ESLint passes with zero warnings; the optimized Next.js production build and its application TypeScript phase pass.
+  - No live recording, transcription, planning request, task mutation, paid AI request, commit, push, merge, or deployment occurred.
+
+## 2026-07-20 — postponed-first saved-item grouping
+
+- Session ID: `TBD` (supporting predictable task scanning)
+- Objective: Show postponed intentions before completed intentions in the inactive-task list.
+- Codex contributions:
+  - Added a stable display-only grouping that concatenates postponed tasks followed by completed tasks.
+  - Added regression coverage using completed-first input to prove the rendered order is reversed without mutating the input records.
+- Human product and design decisions preserved:
+  - Victoria selected `Later` first and `Done` second as the list hierarchy.
+  - Relative order inside each status group, task statuses, timestamps, IndexedDB records, controls, and AI behavior remain unchanged.
+- Verification:
+  - Read-only local inspection shows `Later — Paint the terrace` first, followed by two `Done` intentions; the heading, crossed-out completed titles, controls, and zero horizontal overflow remain correct. No task action or storage write was performed.
+  - Completed-first component input renders postponed-first, proving the display grouping independently of the existing local snapshot.
+  - 34 test files and 123 tests pass; ESLint passes with zero warnings; the optimized Next.js production build and its application TypeScript phase pass.
+  - No recording, paid AI request, commit, push, merge, or deployment occurred.
+
+## 2026-07-20 — explicit postponed/completed heading
+
+- Session ID: `TBD` (supporting content clarity and consistent terminology)
+- Objective: Replace the generic `Saved items` label with an explicit description and remove redundant explanatory copy.
+- Codex contributions:
+  - Renamed the home section and clean-done dialog eyebrow to `Postponed and completed items`.
+  - Removed `Completed and postponed items stay on this device.` and added regression coverage for the resulting copy.
+- Human product and design decisions preserved:
+  - Victoria selected the explicit heading and identified the local-storage sentence as unnecessary in this section.
+  - Status badges, crossed-out completed titles, controls, persistence, privacy documentation, storage behavior, and AI behavior remain unchanged.
+- Verification:
+  - Local component rendering confirms `Postponed and completed items`, no `Saved items` or removed device-storage sentence, retained completed/postponed title treatments, and both 44px bulk controls. The fictional sample has no inactive-task fixtures, so no task data was mutated merely to create a screenshot.
+  - 34 test files and 123 tests pass; ESLint passes with zero warnings; the optimized Next.js production build and its application TypeScript phase pass.
+  - No task action, recording, paid AI request, commit, push, merge, or deployment occurred.
+
+## 2026-07-20 — consolidated upcoming-list heading
+
+- Session ID: `TBD` (supporting mobile scanning and content clarity)
+- Objective: Replace the `Up next` heading and redundant item-count subtitle with one descriptive heading.
+- Codex contributions:
+  - Renamed the section to `Next items in your current flow`.
+  - Removed the dynamic `N more items in your current flow` subtitle and updated regression coverage.
+- Human product and design decisions preserved:
+  - Victoria selected the consolidated heading and requested removal of the visible item-count sentence.
+  - List order, intention content, effort metadata, empty-state message, controls, storage, and AI behavior remain unchanged.
+- Verification:
+  - Local sample inspection shows `Next items in your current flow` on one line, no `Up next` or dynamic item-count sentence, retained task rows, and zero horizontal overflow.
+  - 34 test files and 123 tests pass; ESLint passes with zero warnings; the optimized Next.js production build and its application TypeScript phase pass.
+  - No task action, recording, paid AI request, commit, push, merge, or deployment occurred.
+
+## 2026-07-20 — aligned current-action labels
+
+- Session ID: `TBD` (supporting mobile scanning and recommendation clarity)
+- Objective: Place the current recommendation’s action-status and time-effort labels next to each other.
+- Codex contributions:
+  - Moved the existing `EffortBadge` directly after `Do this now` in one wrapping metadata row.
+  - Removed the former separate effort row below the task title and added structural regression coverage.
+- Human product and design decisions preserved:
+  - Victoria requested the side-by-side label treatment and approved retaining the established compact `About 10′` format.
+  - Badge styles, title, updating state, task actions, effort data, storage, and AI behavior remain unchanged.
+- Verification:
+  - Local sample inspection shows `Do this now` followed by `About 10′` above the title; both badge centers measure `217.59px`, and horizontal overflow is zero in the centered mobile shell.
+  - 34 test files and 123 tests pass; ESLint passes with zero warnings; the optimized Next.js production build and its application TypeScript phase pass.
+  - No task action, recording, paid AI request, commit, push, merge, or deployment occurred.
+
+## 2026-07-20 — compact Up next effort cue
+
+- Session ID: `TBD` (supporting mobile scanning and interface clarity)
+- Objective: Replace the repeated visible `Estimated` word in `Up next` with a recognizable clock icon.
+- Codex contributions:
+  - Reused the existing `Clock3` icon in every upcoming task row and retained the unchanged formatted effort value.
+  - Added screen-reader-only `Estimated effort` context so the visual simplification does not remove meaning for assistive technology.
+  - Added regression coverage for the icon, accessible label, and absence of the former visible numeric prefix.
+- Human product and design decisions preserved:
+  - Victoria selected the clock icon as the compact replacement for the repeated word.
+  - Task estimates, pending wording, ordering, spacing hierarchy, actions, storage, and AI behavior remain unchanged.
+- Verification:
+  - Local sample inspection shows exactly one clock beside each upcoming effort (`5′`, `30′`, and `10′`), no visible numeric `Estimated` prefix, preserved screen-reader text, and zero horizontal overflow.
+  - 34 test files and 123 tests pass; ESLint passes with zero warnings; the optimized Next.js production build and its application TypeScript phase pass.
+  - No task action, recording, paid AI request, commit, push, merge, or deployment occurred.
+
 ## 2026-07-20 — capture-artwork cache invalidation
 
 - Session ID: `TBD` (supporting product-owner-directed visual refinement)

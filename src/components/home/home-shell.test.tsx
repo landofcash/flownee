@@ -91,6 +91,9 @@ describe("home recommendation actions", () => {
     expect(markup).toContain("🧺");
     expect(markup).toContain("Start the dark-clothes wash");
     expect(markup).toContain('data-slot="current-recommendation"');
+    expect(markup).toMatch(
+      /data-slot="current-recommendation-meta"[\s\S]*Do this now[\s\S]*About 10′/,
+    );
     expect(markup).toContain('aria-labelledby="current-intention-title"');
     expect(markup).toContain('<h2 id="current-intention-title"');
     expect(markup).not.toContain('data-slot="card"');
@@ -137,7 +140,15 @@ describe("saved items", () => {
     expect(completedTitle?.[1]).toContain("line-through");
     expect(completedTitle?.[1]).toContain("text-muted-foreground");
     expect(postponedTitle?.[1]).not.toContain("line-through");
+    expect(markup.indexOf("Postponed intention")).toBeLessThan(
+      markup.indexOf("Completed intention"),
+    );
     expect(markup).toContain('data-slot="saved-items-section"');
+    expect(markup).toContain("Postponed and completed items");
+    expect(markup).not.toContain("Saved items");
+    expect(markup).not.toContain(
+      "Completed and postponed items stay on this device.",
+    );
     expect(markup).not.toContain('data-slot="card"');
     expect(markup).not.toContain("truncate");
     expect(markup.match(/data-size="icon-lg"/g)).toHaveLength(2);
@@ -195,14 +206,20 @@ describe("saved items", () => {
 });
 
 describe("open supporting flow sections", () => {
-  it("renders Up next as an open section with 44px management controls", () => {
+  it("renders next items as an open section with 44px management controls", () => {
     const markup = renderToStaticMarkup(
       <UpcomingCard state={sampleHomeState} onManage={vi.fn()} />,
     );
 
     expect(markup).toContain('data-slot="upcoming-section"');
     expect(markup).toContain('aria-labelledby="upcoming-title"');
+    expect(markup).toContain("Next items in your current flow");
+    expect(markup).not.toContain("3 more items in your current flow");
+    expect(markup).not.toContain("Up next");
     expect(markup).toContain('data-size="icon-lg"');
+    expect(markup).toContain("lucide-clock-3");
+    expect(markup).toContain("Estimated effort:");
+    expect(markup).not.toMatch(/Estimated \d/);
     expect(markup).not.toContain('data-slot="card"');
   });
 

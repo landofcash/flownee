@@ -4,7 +4,6 @@ import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import {
   Brain,
-  CheckCircle2,
   CircleAlert,
   LoaderCircle,
   Mic,
@@ -50,7 +49,6 @@ export type CaptureState =
   | "planning"
   | "interpretation"
   | "committing"
-  | "saved"
   | "error"
   | "planning-error"
   | "unavailable";
@@ -73,6 +71,14 @@ export const FLOWNEE_INTENTION_INTERVAL_MS = 2000;
 
 export function nextFlowneeIntentionIndex(currentIndex: number): number {
   return (currentIndex + 1) % FLOWNEE_INTENTION_IMAGES.length;
+}
+
+export async function finishSuccessfulCapture(
+  onFlowChanged: (() => void | Promise<void>) | undefined,
+  closeCapture: () => void,
+): Promise<void> {
+  await onFlowChanged?.();
+  closeCapture();
 }
 
 function FlowneeIntentionIllustration() {
@@ -172,7 +178,6 @@ export function VoiceCapture({
   const [planningOutput, setPlanningOutput] = useState<PlanningOutput | null>(null);
   const [planningModel, setPlanningModel] = useState("");
   const [interpretationDrafts, setInterpretationDrafts] = useState<InterpretationDraft[]>([]);
-  const [savedMessage, setSavedMessage] = useState("Your flow is updated.");
   const sessionRef = useRef<VoiceRecordingSession | null>(null);
   const pendingAudioRef = useRef<RecordingSample | null>(null);
   const transcriptIdRef = useRef<string | null>(null);
@@ -381,10 +386,7 @@ export function VoiceCapture({
           });
           if (commit.plan) await repository.replaceCurrentPlan(commit.plan);
         }
-        setSavedMessage("The capture is saved. No new actionable item was found.");
-        await onFlowChanged?.();
-        onPlanningStateChange?.(false);
-        setState("saved");
+        await finishSuccessfulCapture(onFlowChanged, discardAndClose);
         return;
       }
 
@@ -457,12 +459,7 @@ export function VoiceCapture({
       } else if (commit.plan) {
         await repository.replaceCurrentPlan(commit.plan);
       }
-      setSavedMessage(
-        `${commit.tasks.length} ${commit.tasks.length === 1 ? "intention was" : "intentions were"} added and your flow was updated.`,
-      );
-      await onFlowChanged?.();
-      onPlanningStateChange?.(false);
-      setState("saved");
+      await finishSuccessfulCapture(onFlowChanged, discardAndClose);
     } catch (error) {
       setErrorMessage(
         error instanceof Error
@@ -517,9 +514,7 @@ export function VoiceCapture({
                   ? "Does this look right?"
                   : state === "interpretation" || state === "committing"
                     ? "Review what Flownee understood"
-                    : state === "saved"
-                      ? "Flow updated"
-                      : "Tell Flownee what’s on your mind"}
+                    : "Tell Flownee what’s on your mind"}
               </h2>
               <Button
                 variant="ghost"
@@ -763,21 +758,6 @@ export function VoiceCapture({
                 </div>
               )}
 
-              {state === "saved" && (
-                <div className="flex flex-col items-center py-8 text-center">
-                  <span className="flex size-16 items-center justify-center rounded-full bg-completed text-completed-foreground">
-                    <CheckCircle2 aria-hidden="true" className="size-8" />
-                  </span>
-                  <p className="mt-4 text-lg font-semibold">{savedMessage}</p>
-                  <p className="mt-2 max-w-sm text-sm leading-6 text-muted-foreground">
-                    You can close this view or add another thought whenever it comes
-                    to mind.
-                  </p>
-                  <Button className="mt-6" onClick={discardAndClose}>
-                    Done
-                  </Button>
-                </div>
-              )}
             </div>
 
             <p className="mt-2 border-t pt-2 text-xs leading-5 text-muted-foreground">
