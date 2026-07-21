@@ -55,7 +55,7 @@ Status values: `TODO`, `IN PROGRESS`, `PASS`, `BLOCKED`, `N/A`.
 | Deployment and testing access included | PASS | Completed Devpost draft; public deployment and testing guide | Victoria | 2026-07-21 |
 | All submission materials are in English | PASS | Team final language review; public video title/description and repository materials are English | Victoria | 2026-07-21 |
 | Every URL passes a signed-out test | PASS | Team signed-out link audit plus independent public app, sample, AI-status, and YouTube checks | Team | 2026-07-21 |
-| Submission completed before July 21, 5:00 PM PT | TODO | Devpost confirmation | Victoria | |
+| Submission completed before July 21, 5:00 PM PT | PASS | Team confirmation; public Devpost entry at https://devpost.com/software/flownee; public page independently returned HTTP 200 | Victoria | 2026-07-21 |
 
 ## IP, privacy, and operational safety
 

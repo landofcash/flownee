@@ -25,6 +25,7 @@ pnpm-debug.log*
 
 # Local presentation and video exports
 /artifacts/
+/docs/submission/
 
 # Editors and operating systems
 .DS_Store

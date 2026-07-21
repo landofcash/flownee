@@ -4,17 +4,21 @@ Keep exactly one implementation task under **Now**. Move completed items to **Do
 
 ## Now
 
-- [ ] Submit the completed Devpost draft before the deadline and preserve the confirmation URL and timestamp.
+- [ ] Continue the optional post-submission representative usability study using `docs/evaluation/USABILITY_TEST.md`, recording only observed outcomes as sessions complete.
 
 ## Next
 
-- [ ] Run three to five representative participant sessions using `docs/evaluation/USABILITY_TEST.md`, record real outcomes, and calculate the majority threshold.
+- None. The submitted hackathon MVP has no remaining implementation or release gate.
 
 ## Blocked
 
-- Participant-based usability success requires representative humans. The expert walkthrough is complete; participant outcomes must not be invented.
+- None.
 
 ## Done
+
+- [x] Submitted Flownee to OpenAI Build Week before the deadline. Evidence: public Devpost entry at https://devpost.com/software/flownee; team submission confirmation; public page independently returned HTTP 200 on 2026-07-21.
+
+- [x] Closed every MVP acceptance criterion after final testing. Evidence: team confirmation that the complete test matrix succeeded; public voice-to-plan and task-management journey; reload/reopen persistence; failure recovery; credential boundary; Chrome desktop, Chrome Android, Edge, and best-effort Safari coverage; 35 test files with 133 tests, lint, standalone TypeScript validation, and the optimized production build pass. The ongoing representative usability study is optional post-submission research, not a Build Week submission requirement or MVP release gate.
 
 - [x] Resolved the production PostCSS security advisory. Evidence: pnpm 11's supported workspace-level override pins every PostCSS path to patched `8.5.19`; the lockfile removes vulnerable `8.4.31` and redirects Next.js without changing unrelated dependency resolutions; frozen-lockfile installation and supply-chain policy checks pass; `pnpm audit --prod` reports no known vulnerabilities; 35 test files with 133 tests, lint, standalone TypeScript validation, and the optimized production build pass.
 
@@ -170,15 +174,15 @@ Keep exactly one implementation task under **Now**. Move completed items to **Do
 - [x] Established the Next.js TypeScript baseline with Tailwind CSS, ESLint, Vitest, pnpm lockfile, MIT License, safe `.env.example`, and setup README. Evidence: `pnpm lint`, `pnpm test`, and `pnpm build` all pass.
 - [x] Connected the verified public GitHub repository. Evidence: https://github.com/vixfounder/flownee.
 
-## Build-generated information still required
+## Optional post-submission evidence
 
 - Fixture-level GPT-5.6 token use, latency, and final reasoning comparison. Successful live voice-to-AI planning is now product-owner-reported across physical Android and iPhone journeys; the earlier bounded fixture request returned HTTP 429 on July 18, 2026.
 - Supported audio MIME-format results per browser.
-- Devpost submission URL and confirmation timestamp.
+- Representative-participant observations from the ongoing optional usability study.
 
 ## Session handoff
 
-- Current state: The complete local-first product journey is publicly deployed; automated gates pass; the Codex Session ID, public 2:36 video, completed Devpost draft, intended-platform acceptance, rights confirmation, judge-period credits, and signed-out URL audit are recorded.
-- Next action: Submit the completed Devpost draft before July 21, 2026 at 5:00 PM PT and preserve its confirmation URL and timestamp.
-- Known failures: No current code or intended-platform acceptance failure is known. Exact mobile browser versions, exhaustive per-browser MIME diagnostics, fixture-level model-performance measurements, and representative-participant evidence remain open and are not overstated.
-- Uncommitted decisions: Final GPT-5.6 reasoning effort after fixture-level latency/token evaluation.
+- Current state: Flownee is submitted at https://devpost.com/software/flownee; the complete local-first product journey is publicly deployed; every MVP acceptance criterion and automated gate passes; the Codex Session ID, public 2:36 video, intended-platform acceptance, rights confirmation, judge-period credits, and signed-out URL audit are recorded.
+- Next action: Continue the optional post-submission representative usability study and record observed outcomes without changing the completed hackathon claims.
+- Known failures: No current code, MVP acceptance, intended-platform, release, or submission failure is known. Exact mobile browser versions, exhaustive per-browser MIME diagnostics, fixture-level model-performance measurements, and the ongoing optional participant results remain bounded follow-up evidence.
+- Uncommitted decisions: Any post-hackathon change to GPT-5.6 reasoning effort requires fixture-level latency, token, and quality evidence.

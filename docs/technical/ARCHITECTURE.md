@@ -152,12 +152,12 @@ The runtime validator rejects missing or unknown fields, unsupported schema
 versions, unknown or duplicate references, incomplete task orders, mismatched
 next actions, self/unknown dependencies, invalid provenance, and malformed
 parallel groups. Provider refusal, incomplete output, timeout, and parser failure
-must be handled by the future route before this validator is called. In every
+are handled by the implemented route before this validator is called. In every
 failure case, preserve the confirmed transcript and last valid plan.
 
 ## API routes
 
-Names may change during implementation; responsibilities should remain separate.
+The implemented routes keep transcription and planning responsibilities separate.
 
 ### `POST /api/transcribe`
 
@@ -218,20 +218,12 @@ Names may change during implementation; responsibilities should remain separate.
 
 ### Transcript-review recovery
 
-- One home-screen action requests microphone access and begins a bounded 90-second recording.
+- One home-screen action requests microphone access and begins a bounded 30-second recording.
 - Cancelled or superseded permission requests cannot reopen recording later.
 - After stop, the temporary Blob is sent to `/api/transcribe` and retained only in memory until transcription succeeds or the user discards it.
 - Network, timeout, provider, or rate-limit failures preserve the Blob for explicit retry.
 - Successful text is editable only as transcript correction; this is not a parallel text-capture path.
 - Only user-confirmed transcript text is persisted to IndexedDB; successful audio is released.
-
-### `POST /api/plan`
-
-- Accept a confirmed transcript/new-item payload plus compact active-task context.
-- Enforce schema, item-count, and text-length limits.
-- Call GPT-5.6.
-- Validate and return structured extracted tasks and updated execution plan.
-- Never expose provider credentials or raw internal error details.
 
 ## Privacy and security
 
@@ -304,9 +296,14 @@ Names may change during implementation; responsibilities should remain separate.
 - Navigation uses the network when available and falls back to the cached public shell when offline.
 - User tasks, transcripts, and execution plans are never written to the Cache API; IndexedDB remains their intended local store.
 
-## Architectural decisions still to resolve during implementation
+## Post-MVP operational considerations
 
-- Whether fixture results justify lowering GPT-5.6 reasoning effort after the initial `gpt-5.6-sol`/`medium` baseline run.
-- Exact audio MIME formats supported per target browser.
-- Netlify-compatible request-body limits for recorded audio.
-- Production cache versioning and update UX beyond the safe shell-only service-worker baseline.
+- Keep the current `gpt-5.6-sol`/`medium` baseline unless fixture-level quality,
+  latency, and token evidence supports a change.
+- Continue recording exact browser audio MIME results as optional compatibility
+  evidence; the implemented upload boundary accepts WebM, MP4, and Ogg up to
+  6 MiB.
+- Preserve the current 6 MiB audio and 128 KiB planning-request application
+  limits when reviewing future Netlify platform changes.
+- Version the production shell cache deliberately when a future release changes
+  the offline shell or update experience.

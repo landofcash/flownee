@@ -1,8 +1,13 @@
 # Flownee usability test
 
-Status: **Build Week refinement, expert walkthrough, physical-device acceptance, and team-reported independent qualitative validation complete; structured participant protocol metrics not recorded**
+Status: **Build Week refinement, expert walkthrough, physical-device acceptance, and team-reported independent qualitative validation complete; optional post-submission representative-participant study started and ongoing**
 Last updated: 2026-07-21
 Production build: https://flownee-build-week.netlify.app
+
+The representative-participant protocol is an optional post-submission product-
+research activity. It is not required for the OpenAI Build Week submission and
+does not reopen any passed MVP acceptance or hackathon compliance gate. Results
+will be recorded only as real participant sessions complete.
 
 ## Claim boundary
 

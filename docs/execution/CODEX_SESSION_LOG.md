@@ -5,6 +5,21 @@ Use this file to preserve evidence of Codex contributions and human judgment. Do
 The selected `/feedback` Session ID for the project task where the majority of
 core functionality was built is `019f709a-b5fb-7230-bf41-4c4508f7051f`.
 
+## 2026-07-21 — Post-submission checklist reconciliation
+
+- Objective: Reconcile project records after the successful Devpost submission and final MVP testing.
+- Codex contributions:
+  - Recorded the public Devpost submission and closed the remaining compliance submission gate.
+  - Marked every MVP acceptance criterion passed based on the team's completed successful testing.
+  - Reclassified the started representative usability study as optional, ongoing post-submission research.
+  - Corrected stale architecture language, including the 30-second recording limit, implemented route status, duplicate planning-route description, and post-MVP operational considerations.
+- Human product and testing decisions preserved:
+  - The team confirmed that all MVP testing completed successfully.
+  - The team confirmed that the representative usability study has started, remains ongoing, and is not required for the hackathon submission.
+- Verification:
+  - Documentation checkbox, status, duration, route-description, and handoff consistency checks pass.
+  - No application code, AI request, user data, dependency, deployment, commit, or push changed.
+
 ## 2026-07-21 — PostCSS advisory remediation
 
 - Session ID: `019f709a-b5fb-7230-bf41-4c4508f7051f`

@@ -107,20 +107,20 @@ Deliver one polished, judge-testable journey that demonstrates Flownee's ability
 
 ## Acceptance criteria
 
-- [ ] Home screen shows the stored recommendation immediately on reopen.
-- [ ] Microphone capture begins from the home screen with one user action after permission is available.
-- [ ] A recording can be transcribed, reviewed, and confirmed.
-- [ ] One recording containing multiple intentions produces multiple editable items.
-- [ ] Confirmed items persist before replanning begins.
-- [ ] GPT-5.6 returns schema-valid structured items and an updated ordered plan.
-- [ ] The top action has an understandable reason and editable effort estimate.
-- [ ] Complete, postpone, edit, and delete actions update the visible flow.
-- [ ] Network or model failure never deletes a confirmed item or last valid plan.
-- [ ] Delete-all-local-data removes locally persisted user content.
-- [ ] OpenAI credentials are absent from all browser bundles and repository files.
-- [ ] Critical journey passes on Chrome desktop, Chrome Android, and Edge.
+- [x] Home screen shows the stored recommendation immediately on reopen.
+- [x] Microphone capture begins from the home screen with one user action after permission is available.
+- [x] A recording can be transcribed, reviewed, and confirmed.
+- [x] One recording containing multiple intentions produces multiple editable items.
+- [x] Confirmed items persist before replanning begins.
+- [x] GPT-5.6 returns schema-valid structured items and an updated ordered plan.
+- [x] The top action has an understandable reason and editable effort estimate.
+- [x] Complete, postpone, edit, and delete actions update the visible flow.
+- [x] Network or model failure never deletes a confirmed item or last valid plan.
+- [x] Delete-all-local-data removes locally persisted user content.
+- [x] OpenAI credentials are absent from all browser bundles and repository files.
+- [x] Critical journey passes on Chrome desktop, Chrome Android, and Edge.
 - [x] Safari iPhone behavior is documented after best-effort testing.
-- [ ] Public Netlify deployment works without accounts, payment, invitations, or user API keys.
+- [x] Public Netlify deployment works without accounts, payment, invitations, or user API keys.
 
 ## Demo slice
 
