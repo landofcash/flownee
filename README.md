@@ -129,18 +129,10 @@ showing that validation materially informed the product.
 
 ## How the AI workflow works
 
-```text
-Microphone
-  -> temporary browser audio Blob
-  -> protected /api/transcribe route
-  -> GPT-4o Transcribe
-  -> editable transcript
-  -> protected /api/plan route
-  -> GPT-5.6 structured extraction and planning
-  -> interpretation review
-  -> atomic IndexedDB task + plan commit
-  -> updated Do this now recommendation
-```
+[![Flownee technical architecture: local browser state, protected Netlify routes, and focused OpenAI model responsibilities](docs/technical/TECHNICAL_ARCHITECTURE.png)](docs/technical/TECHNICAL_ARCHITECTURE.svg)
+
+The diagram is also available as a
+[scalable SVG](docs/technical/TECHNICAL_ARCHITECTURE.svg).
 
 ### GPT-4o Transcribe
 
