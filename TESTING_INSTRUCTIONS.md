@@ -104,7 +104,12 @@ or changing local task data:
 - [Loading saved flow](https://flownee-build-week.netlify.app/?demo=loading)
 
 The sample is a read-only presentation: its task actions are intentionally
-disabled. Use the normal home URL for the interactive journey.
+disabled. This prevents fictional preview data from being saved to IndexedDB,
+triggering paid AI requests, or changing the judge's existing flow. Disabled
+actions therefore indicate a safe presentation state, not a broken control.
+The visible **Read-only preview** banner explains this state and provides a
+**Try interactive Flownee** link to the normal home URL for the complete
+interactive journey.
 
 ## Recovery and privacy expectations
 

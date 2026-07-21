@@ -1,7 +1,9 @@
 "use client";
 
+import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
+  ArrowRight,
   Check,
   CheckCircle2,
   ChevronRight,
@@ -50,9 +52,51 @@ import {
 type HomeShellProps = {
   state: HomeState;
   useLocalData?: boolean;
+  demoPreview?: boolean;
 };
 
-export function FlowUpdateOverlay({ visible }: { visible: boolean }) {
+export function DemoPreviewBanner() {
+  return (
+    <aside
+      aria-labelledby="demo-preview-title"
+      className="mb-5 rounded-xl border border-support/30 bg-suggested px-4 py-3.5"
+      data-slot="demo-preview-banner"
+    >
+      <div className="flex items-start gap-3">
+        <span className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-full bg-background text-primary shadow-sm">
+          <Info aria-hidden="true" className="size-4" />
+        </span>
+        <div className="min-w-0 flex-1">
+          <div className="flex flex-wrap items-center gap-2">
+            <Badge variant="suggested">Preview</Badge>
+            <h2 className="text-sm font-semibold" id="demo-preview-title">
+              Read-only preview
+            </h2>
+          </div>
+          <p className="mt-1 text-xs leading-5 text-muted-foreground">
+            Actions are intentionally disabled. This example does not save
+            data or use AI.
+          </p>
+          <Link
+            className="mt-1 inline-flex min-h-11 items-center gap-1.5 rounded-md font-medium text-primary underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+            href="/"
+          >
+            Try interactive Flownee
+            <ArrowRight aria-hidden="true" className="size-4" />
+          </Link>
+        </div>
+      </div>
+    </aside>
+  );
+}
+
+export function FlowUpdateOverlay({
+  visible,
+  demoPreview = false,
+}: {
+  visible: boolean;
+  demoPreview?: boolean;
+}) {
   const dialogRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -79,6 +123,7 @@ export function FlowUpdateOverlay({ visible }: { visible: boolean }) {
         role="dialog"
         tabIndex={-1}
       >
+        {demoPreview && <DemoPreviewBanner />}
         <span className="animate-flownee-gradient mx-auto flex size-20 items-center justify-center rounded-full bg-flownee-gradient p-1 motion-reduce:animate-none">
           <span className="flex size-full items-center justify-center rounded-full bg-background text-primary">
             <LoaderCircle
@@ -560,6 +605,7 @@ export function CleanDoneDialog({
 export function HomeShell({
   state: initialState,
   useLocalData = false,
+  demoPreview = false,
 }: HomeShellProps) {
   const [state, setState] = useState<HomeState>(
     useLocalData ? { status: "loading" } : initialState,
@@ -780,6 +826,8 @@ export function HomeShell({
           </HyperText>
         </div>
 
+        {demoPreview && !isFlowUpdateBlocking && <DemoPreviewBanner />}
+
         <div className="grid items-start gap-5">
           {state.status === "empty" && <EmptyRecommendation />}
           {state.status === "loading" && <LoadingRecommendation />}
@@ -834,19 +882,23 @@ export function HomeShell({
           />
         )}
 
-        <div className="mt-6 flex items-start gap-2 border-t border-border/80 pt-4 text-xs leading-5 text-muted-foreground">
-          <Info aria-hidden="true" className="mt-0.5 size-3.5 shrink-0" />
-          <p>
-            Tasks and plans stay in this browser. Voice will only be sent for
-            processing after you choose to record.
-          </p>
-        </div>
+        {!demoPreview && (
+          <div className="mt-6 flex items-start gap-2 border-t border-border/80 pt-4 text-xs leading-5 text-muted-foreground">
+            <Info aria-hidden="true" className="mt-0.5 size-3.5 shrink-0" />
+            <p>
+              Tasks and plans stay in this browser. Voice will only be sent for
+              processing after you choose to record.
+            </p>
+          </div>
+        )}
       </main>
 
-      <VoiceCapture
-        onFlowChanged={refreshLocalState}
-        onPlanningStateChange={handlePlanningStateChange}
-      />
+      {!demoPreview && (
+        <VoiceCapture
+          onFlowChanged={refreshLocalState}
+          onPlanningStateChange={handlePlanningStateChange}
+        />
+      )}
       <TaskActionsDialog
         key={selectedTask?.id ?? "closed"}
         task={selectedTask}
@@ -885,7 +937,10 @@ export function HomeShell({
         void mutateTask({ kind: "delete-completed" }, { replan: false })
       }
     />
-    <FlowUpdateOverlay visible={isFlowUpdateBlocking} />
+    <FlowUpdateOverlay
+      demoPreview={demoPreview}
+      visible={isFlowUpdateBlocking}
+    />
     <CompletionConfetti trigger={completionCelebrationTrigger} />
     </>
   );

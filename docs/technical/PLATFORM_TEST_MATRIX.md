@@ -36,7 +36,7 @@ The supported-platform journey is:
 On localhost, `/`, `/?demo=sample`, `/manifest.webmanifest`, `/sw.js`,
 `/diagnostics/recording`, and `/api/ai-status` each returned HTTP 200 on
 2026-07-18. The manifest and service worker returned their expected content
-types. The current automated baseline is 130 passing tests plus passing lint and
+types. The current automated baseline is 133 passing tests plus passing lint and
 production build gates.
 
 ## Public deployment gate

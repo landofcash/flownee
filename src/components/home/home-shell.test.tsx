@@ -4,6 +4,7 @@ import { describe, expect, it, vi } from "vitest";
 import {
   CleanDoneDialog,
   CompleteRecommendation,
+  DemoPreviewBanner,
   EmptyRecommendation,
   FlowUpdateOverlay,
   HomeShell,
@@ -130,6 +131,16 @@ describe("flow update overlay", () => {
       "Your change is saved. Flownee is finding what makes sense next.",
     );
     expect(markup).not.toContain("button");
+  });
+
+  it("keeps the read-only explanation visible in the updating demo", () => {
+    const markup = renderToStaticMarkup(
+      <FlowUpdateOverlay demoPreview visible />,
+    );
+
+    expect(markup).toContain('data-slot="demo-preview-banner"');
+    expect(markup).toContain("Read-only preview");
+    expect(markup).toContain("Try interactive Flownee");
   });
 });
 
@@ -278,5 +289,39 @@ describe("home accessibility frame", () => {
     expect(markup).toContain(
       "pb-[calc(10rem+env(safe-area-inset-bottom))]",
     );
+  });
+
+  it("clearly labels demo states and links to the interactive app", () => {
+    const bannerMarkup = renderToStaticMarkup(<DemoPreviewBanner />);
+    const demoMarkup = renderToStaticMarkup(
+      <HomeShell
+        demoPreview
+        state={sampleHomeState}
+        useLocalData={false}
+      />,
+    );
+
+    expect(bannerMarkup).toContain('data-slot="demo-preview-banner"');
+    expect(bannerMarkup).toContain("Read-only preview");
+    expect(bannerMarkup).toContain("Preview");
+    expect(bannerMarkup).toContain(
+      "Actions are intentionally disabled. This example does not save data or use AI.",
+    );
+    expect(bannerMarkup).toContain('href="/"');
+    expect(bannerMarkup).toContain("Try interactive Flownee");
+    expect(demoMarkup).toContain('data-slot="demo-preview-banner"');
+    expect(demoMarkup).not.toContain('aria-label="Add an intention by voice"');
+    expect(demoMarkup).not.toContain(
+      "Voice will only be sent for processing",
+    );
+  });
+
+  it("does not show the demo banner in the interactive app", () => {
+    const markup = renderToStaticMarkup(
+      <HomeShell state={sampleHomeState} useLocalData />,
+    );
+
+    expect(markup).not.toContain('data-slot="demo-preview-banner"');
+    expect(markup).toContain('aria-label="Add an intention by voice"');
   });
 });

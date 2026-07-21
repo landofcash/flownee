@@ -27,7 +27,12 @@ productivity system.
 
 No account, payment, invitation, user API key, or preloaded personal data is
 required. The fictional previews do not create or change local tasks; their
-task actions are intentionally disabled.
+task actions are intentionally disabled. They are safe, read-only presentation
+states for quickly reviewing Flownee's hierarchy without writing fictional
+items to IndexedDB, consuming paid AI requests, or changing a judge's real
+browser data. Use the normal application URL for the complete interactive
+journey. Each preview now carries an in-product **Read-only preview** banner
+that explains these boundaries and links directly back to interactive Flownee.
 
 The Codex `/feedback` Session ID for the project task where the majority of
 core functionality was built is
@@ -48,6 +53,38 @@ Flownee reduces both kinds of friction:
 4. See one explained recommendation and a practical remaining order.
 5. Complete, postpone, edit, or delete items and let the flow update.
 
+The product deliberately avoids turning productivity into another project to
+manage. Unlike assistants that require accounts, repeated prompting, manual
+categories, or complex setup, Flownee asks for one quick action: speak. It then
+maintains the structure and next-action guidance while the user remains free to
+accept, correct, postpone, complete, or ignore a suggestion.
+
+### Product validation
+
+Flownee was validated at multiple stages. Initial concept validation confirmed
+that the problem and proposed voice-first approach resonated with users.
+Additional independent qualitative validation during and after product
+development found that users reported forgetting fewer everyday tasks, feeling
+less mental clutter, and experiencing greater day-to-day satisfaction.
+
+These are qualitative, self-reported outcomes. The repository does not record a
+participant count, standardized instrument, control group, effect size, or
+longitudinal retention period for this validation, so Flownee does not present
+the findings as statistically representative or causal evidence.
+
+### Intentional next-action language
+
+Flownee deliberately uses three equivalent expressions for the same central
+concept:
+
+- **What should I do now?** states the user's practical question.
+- **What makes sense next?** expresses Flownee's calm, contextual guidance.
+- **Do this now** labels the compact current-action state.
+
+The expression changes with context, available screen space, and tone. This is
+an intentional copywriting system, not a difference in product logic: all three
+phrases refer to the current recommended next action.
+
 ## Core experience
 
 - One-tap voice capture from the home screen.
@@ -64,6 +101,31 @@ Flownee reduces both kinds of friction:
 - IndexedDB persistence across refresh, close, reopen, and PWA use.
 - Light and dark themes, responsive mobile-first UI, keyboard-accessible
   non-capture controls, reduced-motion handling, and installable PWA metadata.
+
+## Usability-driven Build Week refinement
+
+Flownee was tested and refined continuously during Build Week rather than left
+as a first-pass prototype. Product-owner walkthroughs on desktop and physical
+phones exposed practical issues, and each round informed the next release.
+That cycle produced:
+
+- larger, clearer touch targets and a sticky mobile header;
+- a simpler capture-to-flow handoff with the redundant success screen removed;
+- clearer task terminology, effort controls, status feedback, and blocking
+  replanning feedback;
+- slide-to-confirm task actions that reduce accidental completion or
+  postponement;
+- improved cross-capture grouping so related errands can be planned together;
+- production same-origin and failure-recovery fixes discovered through live
+  deployment testing; and
+- a more modern visual system using Plus Jakarta Sans, restrained Magic UI
+  motion, Flownee colors, light/dark themes, and responsive mobile layouts.
+
+This is documented as iterative product-owner usability, physical-device
+functional acceptance, and team-reported independent qualitative validation.
+The structured participant protocol and timed success thresholds remain
+separate and incomplete; this distinction keeps the evidence honest while
+showing that validation materially informed the product.
 
 ## How the AI workflow works
 
@@ -209,15 +271,19 @@ new transcription and planning are intentionally paused.
 ## Verification
 
 ```bash
+pnpm install --frozen-lockfile
+pnpm audit --prod
 pnpm lint
 pnpm test
+pnpm exec tsc --noEmit
 pnpm build
 ```
 
-The current automated baseline is 35 test files and 130 passing tests. Coverage
+The current automated baseline is 35 test files and 133 passing tests. Coverage
 includes IndexedDB transactions, stale-plan rejection, structured-output
 contracts, provider boundaries, route validation, throttling, task actions,
-home states, voice-state rendering, PWA metadata, and UI behavior.
+home states, voice-state rendering, PWA metadata, and UI behavior. The current
+production dependency audit reports no known vulnerabilities.
 
 For the complete manual public journey, expected results, recovery checks,
 fictional voice input, and delete-all procedure, follow

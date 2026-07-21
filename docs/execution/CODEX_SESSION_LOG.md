@@ -5,6 +5,74 @@ Use this file to preserve evidence of Codex contributions and human judgment. Do
 The selected `/feedback` Session ID for the project task where the majority of
 core functionality was built is `019f709a-b5fb-7230-bf41-4c4508f7051f`.
 
+## 2026-07-21 — PostCSS advisory remediation
+
+- Session ID: `019f709a-b5fb-7230-bf41-4c4508f7051f`
+- Objective: Remove the known production PostCSS advisory without broadening the dependency update.
+- Codex contributions:
+  - Confirmed the vulnerable transitive `postcss@8.4.31` path originated under Next.js and that `8.5.10` or newer contains the fix.
+  - Rejected pnpm's ignored legacy `package.json` override location after the package manager warned it was unsupported.
+  - Added the supported workspace-level override for `postcss@8.5.19` and regenerated the lockfile.
+  - Verified that the lockfile removes only `8.4.31`, points every PostCSS consumer to `8.5.19`, and contains no unrelated resolution changes.
+- Human engineering decision preserved:
+  - The product owner approved fixing the advisory before final release.
+- Verification:
+  - Frozen-lockfile installation and repository supply-chain policy checks pass.
+  - `pnpm audit --prod`: no known vulnerabilities.
+  - 35 test files and 133 tests, lint, standalone TypeScript validation, and optimized production build: pass.
+  - No application behavior, AI request, task data, commit, push, or deployment occurred.
+
+## 2026-07-21 — validation and product-language reconciliation
+
+- Session ID: `019f709a-b5fb-7230-bf41-4c4508f7051f`
+- Objective: Record the team's multi-stage validation evidence and explain Flownee's intentional next-action copy system.
+- Codex contributions:
+  - Reconciled the earlier concept interviews, independent qualitative validation during and after development, product-owner refinement, and physical-device acceptance as distinct evidence types.
+  - Recorded the reported outcomes—fewer forgotten everyday tasks, less mental clutter, and greater day-to-day satisfaction—without inventing participant counts, measurements, or causal effect sizes.
+  - Documented **What should I do now?**, **What makes sense next?**, and **Do this now** as contextual variants of one next-action concept, with distinct user-question, brand-guidance, and compact-action roles.
+  - Preserved the structured participant protocol as a separate unverified quantitative threshold rather than treating qualitative validation as equivalent data.
+- Human product and research decisions preserved:
+  - Victoria supplied the validation history and qualitative outcomes.
+  - Victoria confirmed that the three next-action phrases are an intentional copywriting choice based on context, screen size, and tone.
+- Verification:
+  - Claims remain qualitative and self-reported; no participant number, standardized method, effect size, or causality is asserted.
+  - Documentation terminology and evidence boundaries are consistent across README, project brief, and usability record.
+  - No application code, AI request, task data, deployment, commit, or push occurred.
+
+## 2026-07-21 — in-product read-only demo explanation
+
+- Session ID: `019f709a-b5fb-7230-bf41-4c4508f7051f`
+- Objective: Explain the fictional demonstration states directly in their UI and provide a clear path into the interactive product.
+- Codex contributions:
+  - Added a reusable accessible banner with an information icon, Preview badge, concise read-only explanation, and 44px-or-larger interactive-app link.
+  - Applied the banner to every `?demo=...` route while leaving the normal home experience unchanged.
+  - Removed voice capture from demo rendering so the stated no-save/no-AI boundary is enforced by the component tree rather than copy alone.
+  - Added regression coverage for banner visibility, interactive-app handoff, demo voice exclusion, and normal-app preservation.
+- Human product and design decisions preserved:
+  - Victoria chose to repair the judging-readiness gap by putting the read-only explanation in the product, not only in documentation.
+  - The banner remains calm and compact, uses existing Flownee tokens, and keeps fictional previews visually distinct from the real experience.
+- Verification:
+  - 35 test files and 133 tests pass; lint passes with zero warnings; the optimized Next.js production build passes.
+  - Browser checks at 320px and 430px show no horizontal overflow and a 44px-or-larger link target.
+  - The banner link opens the normal home route, where the banner is absent and voice capture is restored.
+  - No recording, task mutation, AI request, commit, push, or deployment occurred.
+
+## 2026-07-21 — judging-criteria narrative refinement
+
+- Session ID: `019f709a-b5fb-7230-bf41-4c4508f7051f`
+- Objective: Strengthen the evidence for Design, Potential Impact, and Quality of the Idea while preserving accurate research boundaries.
+- Codex contributions:
+  - Explained that fictional demo states are deliberately read-only so they do not write preview data, consume paid requests, or modify a judge's saved flow.
+  - Documented the one-time Hyper Text scramble as an intentional modern brand interaction and metaphor for scattered thoughts resolving into flow, including its reduced-motion boundary.
+  - Synthesized the recorded Build Week testing and release history into concrete usability-driven functional and design outcomes.
+  - Sharpened Flownee's differentiation around one quick spoken action and freedom from maintaining another productivity system.
+- Human product and design decisions preserved:
+  - Victoria defined simplicity, speed, user freedom, and a modern interactive identity as central product qualities.
+  - The team characterized the completed evaluation as iterative product-owner usability refinement and functional acceptance, not a representative participant study.
+- Verification:
+  - Claims trace to implemented features and dated entries already present in the repository.
+  - No application code, AI request, task data, deployment, commit, or push occurred.
+
 ## 2026-07-21 — final submission evidence reconciliation
 
 - Session ID: `019f709a-b5fb-7230-bf41-4c4508f7051f`

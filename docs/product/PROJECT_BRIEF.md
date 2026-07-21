@@ -41,6 +41,23 @@ Participants associated completing these items with greater calm, control, satis
 
 This is early qualitative evidence from a small convenience sample. It supports exploration but is not representative market research.
 
+## Product validation
+
+Validation continued beyond the initial problem interviews. The team reports
+that independent validation was conducted during and after product development.
+The product and voice-first approach continued to resonate, and users reported:
+
+- forgetting fewer everyday tasks;
+- experiencing less mental clutter; and
+- greater day-to-day satisfaction.
+
+These outcomes are qualitative and self-reported. The available project record
+does not specify the participant count, recruitment method, standardized
+instrument, comparison baseline, effect size, or observation period. The
+results therefore support the product's potential impact but must not be
+described as statistically representative, experimentally controlled, or proof
+that Flownee alone caused the reported changes.
+
 ## Product hypothesis
 
 If people can capture informal intentions immediately through natural voice and receive an automatically updated, explainable execution flow, fewer intentions will be forgotten and users will spend less mental effort deciding what to do next.
@@ -59,11 +76,26 @@ Flownee provides a persistent voice inbox used incrementally throughout the day:
 
 When the user opens Flownee only to check what to do, the last valid plan loads immediately without an AI request.
 
+## Intentional next-action language
+
+Flownee uses **What should I do now?**, **What makes sense next?**, and **Do this
+now** as contextual expressions of one product concept: the current recommended
+next action. **What should I do now?** voices the user's need, **What makes sense
+next?** communicates Flownee's calm guidance, and **Do this now** fits compact
+action surfaces. Their use varies by context, screen size, and tone; it does not
+represent different functionality or an inconsistent product promise.
+
 ## Value proposition
 
 **Capture naturally; organize automatically; act with less friction.**
 
 Flownee bridges the gap between a passing thought and a completed action. It accepts casual and important responsibilities without requiring the user to maintain a productivity system manually.
+
+The intended benefit is freedom from productivity-system maintenance. The user
+does not have to decide how to categorize a thought, construct a prompt, keep a
+chatbot's context current, or continuously reorganize a list. A quick spoken
+capture is enough; Flownee performs the organizational work and returns one
+clear next-action suggestion while preserving user control.
 
 Candidate tagline:
 
@@ -79,9 +111,21 @@ Candidate tagline:
 | Calendar | Manages fixed-time commitments | Keeps flexible activities flexible instead of manufacturing appointments |
 | General AI chatbot | Can organize a supplied list | Maintains persistent local task state and continuously updates guidance |
 
+Flownee's simplicity is part of the product idea, not a missing feature. Many
+assistants expose broad capabilities but require setup, repeated prompting, and
+ongoing system maintenance. Flownee deliberately narrows the interaction to a
+fast voice capture and a continuously updated answer. It gives users freedom
+from another task-management obligation rather than asking them to think about
+how to operate an assistant.
+
 Concise positioning:
 
 > Voice notes remember what you said. Task managers store what you entered. Flownee helps you act on what is occupying your mind.
+
+Short-form differentiation:
+
+> Other productivity assistants help you manage a system. Flownee quietly
+> manages the flow so you can get back to your life.
 
 ## Product principles
 
@@ -134,3 +178,7 @@ Both team members reside in Portugal and have confirmed legal age.
 - Present effort values as editable estimates.
 - Do not claim routine learning, calendar awareness, or location awareness in the MVP.
 - Describe the early interviews accurately as informal qualitative evidence.
+- Describe the later independent validation as qualitative, self-reported
+  evidence unless participant counts, methods, measurements, and observation
+  periods are separately documented; do not invent quantitative or causal
+  claims.

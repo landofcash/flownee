@@ -1,15 +1,35 @@
 # Flownee usability test
 
-Status: **Expert walkthrough complete; representative participant round pending**
-Last updated: 2026-07-20
+Status: **Build Week refinement, expert walkthrough, physical-device acceptance, and team-reported independent qualitative validation complete; structured participant protocol metrics not recorded**
+Last updated: 2026-07-21
 Production build: https://flownee-build-week.netlify.app
 
 ## Claim boundary
 
-The completed session was an expert task walkthrough, not participant research.
-No representative users were available in this workspace, so the team must not
-claim that "most participants" succeeded yet. The participant table below must
-contain real observed sessions only.
+The repository contains several distinct evidence types: an expert task
+walkthrough, product-owner and physical-device acceptance, and a team-supplied
+summary of independent qualitative validation conducted during and after
+development. The independent validation found positive self-reported outcomes,
+but its participant count, recruitment method, task-level observations, timing,
+and measurement instruments are not recorded here.
+
+Accordingly, the validation may support qualitative statements about user
+experience, but it does not establish the timed or majority thresholds in the
+structured protocol below. The participant table must contain only separately
+recorded observed sessions; missing measurements must not be inferred.
+
+## Multi-stage product validation
+
+- **Concept stage:** Initial validation confirmed that the problem and proposed
+  voice-first approach resonated with users.
+- **During development:** Independent qualitative feedback accompanied the
+  iterative product and design work.
+- **After development:** Users reported forgetting fewer everyday tasks,
+  experiencing less mental clutter, and greater day-to-day satisfaction.
+
+These are qualitative, self-reported outcomes rather than quantified causal or
+statistically representative findings. No numerical improvement, effect size,
+or majority rate is claimed without the underlying participant record.
 
 ## Product-owner functional verification
 
@@ -25,6 +45,33 @@ This is valuable physical-device functional evidence, but it is not a
 representative-user session and does not establish the majority-usability
 threshold below.
 
+## Build Week usability-refinement cycle
+
+Usability evaluation occurred iteratively throughout Build Week through
+product-owner walkthroughs, responsive browser checks, physical-phone testing,
+and repeated review of the complete capture-to-action journey. Findings were
+converted into small approved changes, rebuilt, tested, and checked again.
+
+Material outcomes included:
+
+- enlarging touch targets and making the shared header sticky;
+- simplifying the capture handoff by removing the extra `Flow updated` screen;
+- clarifying task labels, effort selection, saved-item grouping, and action
+  feedback;
+- introducing slide-to-confirm controls for consequential task-state changes;
+- making replanning visibly blocking so users understand that Flownee is
+  updating their flow;
+- fixing live same-origin behavior and strengthening grouping across captures;
+- adopting Plus Jakarta Sans, the Flownee color system, restrained Magic UI
+  effects, and responsive light/dark layouts; and
+- verifying recording, AI interaction, task actions, deletion, persistence,
+  and reopening on physical Android and iPhone devices.
+
+This evidence shows that usability work materially changed the implementation
+and visual design. It complements the team-reported independent qualitative
+validation; neither evidence source supplies the missing structured timing,
+task-success, or majority measurements below.
+
 ## Confirmed success measures
 
 | Success measure | Walkthrough result | Evidence or remaining test |
@@ -39,7 +86,7 @@ threshold below.
 | Users can correct transcripts, interpretations, and estimates | **Functional pass; participant comprehension pending** | Controls are automated-test covered, and physical-device testing exercised review, edit, delete, and all available task actions. |
 | Local state survives refresh and reopen | **Functional pass; participant confirmation pending** | IndexedDB tests pass, and physical Android/iPhone testing confirmed reload and reopen persistence. |
 | Full journey works on intended platforms | **Functional pass; participant confirmation pending** | Flownee is submitted as a responsive web/PWA with no proprietary hardware or special installation path. Physical Android/iPhone journeys, Windows Chrome-engine evidence, and team final intended-platform acceptance are recorded in `docs/technical/PLATFORM_TEST_MATRIX.md`; this is not exhaustive browser/version certification. |
-| Most small-test participants capture an item and understand the next recommendation without help | **Not assessed** | Requires at least three representative sessions; a majority must complete both tasks without help. |
+| Most small-test participants capture an item and understand the next recommendation without help | **Not verified against the structured threshold** | Independent qualitative validation reported positive outcomes, but the repository does not contain participant-level capture and comprehension observations needed to calculate this majority. |
 
 ## Walkthrough setup
 
@@ -65,12 +112,20 @@ threshold below.
 - The recommendation reason is concise and explains parallel use of time.
 - Local-storage and voice-processing boundaries are surfaced on the home page.
 
+### Intentional next-action language
+
+**What should I do now?**, **What makes sense next?**, and **Do this now** are
+intentional contextual variants of the same next-action concept. The first
+states the user's question, the second conveys Flownee's calm recommendation,
+and the third labels the compact current-action state. Variation by context,
+screen size, or tone is a copywriting choice and does not alter functionality
+or evaluation meaning.
+
 ### Findings
 
 | Priority | Finding | Why it matters | Recommended follow-up |
 |---|---|---|---|
-| High | The fictional sample shows disabled `Done`, `Do later`, and more-action controls without explaining that the preview is read-only. | A judge or participant may interpret the disabled controls as a broken application. | Label the sample clearly as a read-only fictional preview and provide one short explanation near the controls, or make the preview seed disposable local data so actions can be demonstrated. |
-| Medium | Product terminology alternates between `What makes sense next`, `What should I do now?`, and `Do this now`. | All phrases are understandable, but variation weakens the central product promise and may complicate recall in a short demo. | Select one primary phrase and use the others only as supporting language. |
+| Resolved locally | The fictional sample uses disabled `Done`, `Do later`, and more-action controls because it is a non-mutating preview. | Without context, a judge could interpret disabled controls as broken. | The new in-product **Read-only preview** banner explains that actions are disabled, no data is saved, and no AI is used; it links directly to interactive Flownee. README and judge instructions preserve the same explanation. Deployment remains required before judges receive this mitigation. |
 | Medium | Several success measures rely on implementation evidence because the full voice journey was not run in this session. | Technical correctness does not establish that a target user understands the interaction. | Complete the representative protocol below on the deployed app. |
 
 No critical accessibility, overflow, first-run comprehension, or

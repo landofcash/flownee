@@ -10,6 +10,7 @@ export default async function Home({ searchParams }: HomePageProps) {
 
   return (
     <HomeShell
+      demoPreview={demo !== undefined}
       state={getHomeStateForDemo(demo)}
       useLocalData={demo === undefined}
     />
