@@ -9,7 +9,7 @@ Status values: `TODO`, `IN PROGRESS`, `PASS`, `BLOCKED`, `N/A`.
 | Team members are of legal age | PASS | Team confirmation | Victoria | 2026-07-18 |
 | Team resides in an eligible territory | PASS | Portugal; Official Rules country list | Victoria | 2026-07-18 |
 | Victoria is authorized Devpost representative | PASS | Team confirmation | Victoria | 2026-07-18 |
-| No entrant exclusion or conflict applies | TODO | Final team declaration | Victoria | |
+| No entrant exclusion or conflict applies | PASS | Victoria and Mike final declaration | Team | 2026-07-21 |
 | Selected track is Apps for Your Life | PASS | `docs/product/PROJECT_BRIEF.md` | Victoria | 2026-07-18 |
 | Project was created from scratch during submission period | PASS | Team confirmation; repository history | Team | 2026-07-18 |
 
@@ -62,7 +62,7 @@ Status values: `TODO`, `IN PROGRESS`, `PASS`, `BLOCKED`, `N/A`.
 | Requirement | Status | Evidence | Owner | Last verified |
 |---|---|---|---|---|
 | Dependencies and assets have compatible licenses | PASS | Permissive direct-dependency review, recorded Magic UI/font/runtime licenses, repository-owned product assets, and team final rights confirmation | Mike | 2026-07-21 |
-| OpenAI and other service terms are followed | TODO | Terms review | Team | |
+| OpenAI and other service terms are followed | PASS | Victoria and Mike final declaration | Team | 2026-07-21 |
 | Originality and team ownership are confirmed | PASS | Team final ownership and rights confirmation; repository history shows work created during the submission period | Team | 2026-07-21 |
 | No unauthorized trademarks, music, images, or data are used | PASS | Team final media and asset rights confirmation | Victoria | 2026-07-21 |
 | Audio is not intentionally retained after transcription | PASS | Temporary Blob lifecycle and privacy panel; mocked route/browser verification | Mike | 2026-07-18 |

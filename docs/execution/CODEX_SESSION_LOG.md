@@ -15,6 +15,7 @@ core functionality was built is `019f709a-b5fb-7230-bf41-4c4508f7051f`.
   - Corrected the public GitHub repository reference from the former owner to `vixfounder/flownee` and removed stale unsupported-platform wording.
 - Human product and submission decisions preserved:
   - Victoria and Mike confirmed the intended web/PWA platform scope, final media and asset rights, judge-period credit availability, completed Devpost draft, and signed-out URL audit.
+  - Victoria and Mike confirmed that no entrant exclusion or conflict applies and that OpenAI and other applicable service terms are followed.
   - Final Devpost submission remains a human-controlled action; its confirmation URL and timestamp must not be invented.
 - Verification:
   - Public application, fictional sample, AI-status route, GitHub repository visibility, and public YouTube page were independently checked during the final audit.
